@@ -41,7 +41,7 @@ async def hybrid_search(
     must = [qm.FieldCondition(key="tenant_id", match=qm.MatchValue(value=str(tenant_id)))]
     if payload_filters:
         for k, v in payload_filters.items():
-            if v is None:
+            if v is None or isinstance(v, (dict, list, tuple, set)):
                 continue
             must.append(qm.FieldCondition(key=k, match=qm.MatchValue(value=v)))
     flt = qm.Filter(must=must)
