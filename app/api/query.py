@@ -7,7 +7,9 @@ from time import perf_counter
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import StreamingResponse
 
+from app.config import get_settings
 from app.core.auth import AuthenticatedTenant
+from app.db import neo4j as neo4j_db
 from app.db import qdrant as qdrant_db
 from app.deps import current_tenant
 from app.generate.llm import stream_chat
@@ -25,7 +27,9 @@ log = get_logger("app.api.query")
 
 async def _generate(req: QueryRequest, tenant_id) -> AsyncIterator[bytes]:
     t0 = perf_counter()
+    settings = get_settings()
     qclient = qdrant_db.get_client()
+    driver = neo4j_db.get_driver() if settings.graph_retrieval_enabled else None
     try:
         retrieval = await retrieve(
             qclient,
@@ -34,6 +38,7 @@ async def _generate(req: QueryRequest, tenant_id) -> AsyncIterator[bytes]:
             mode=req.mode,  # type: ignore[arg-type]
             top_k=req.top_k,
             payload_filters=req.filters,
+            neo4j=driver,
         )
     except Exception as e:
         log.exception("retrieval_failed")
@@ -97,7 +102,9 @@ async def query(
 
     # Non-stream JSON path — convenient for Swagger UI manual testing.
     t0 = perf_counter()
+    settings = get_settings()
     qclient = qdrant_db.get_client()
+    driver = neo4j_db.get_driver() if settings.graph_retrieval_enabled else None
     retrieval = await retrieve(
         qclient,
         tenant_id=auth.tenant_id,
@@ -105,6 +112,7 @@ async def query(
         mode=req.mode,  # type: ignore[arg-type]
         top_k=req.top_k,
         payload_filters=req.filters,
+        neo4j=driver,
     )
     sources = [{"filename": c.filename, "page": c.page} for c in retrieval.chunks]
 

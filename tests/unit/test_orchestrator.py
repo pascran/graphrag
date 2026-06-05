@@ -6,6 +6,7 @@ import uuid
 import pytest
 
 from app.retrieve import orchestrator
+from app.retrieve.graph import GraphHit
 from app.retrieve.vector import VectorHit
 
 
@@ -16,16 +17,34 @@ def _hits(n: int) -> list[VectorHit]:
             page=i,
             text=f"chunk-{i}",
             score=1.0 - i * 0.01,
-            document_id=str(uuid.uuid4()),
+            document_id=f"doc-{i}",
             chunk_index=i,
         )
         for i in range(n)
     ]
 
 
+def _graph_hits(items: list[tuple[str, int, str, int]]) -> list[GraphHit]:
+    """items = [(filename, page, document_id, chunk_index), ...]"""
+    return [
+        GraphHit(
+            filename=fn, page=p, text=f"g-{ci}", score=float(3 - i),
+            document_id=did, chunk_index=ci,
+        )
+        for i, (fn, p, did, ci) in enumerate(items)
+    ]
+
+
 @pytest.fixture()
 def patched(monkeypatch):
-    state = {"classify_called_with": None, "search_top_k": None, "intent": "fact"}
+    state = {
+        "classify_called_with": None,
+        "search_top_k": None,
+        "intent": "fact",
+        "graph_called": False,
+        "graph_top_k": None,
+        "graph_return": [],
+    }
 
     async def fake_classify(question: str) -> str:
         state["classify_called_with"] = question
@@ -35,8 +54,14 @@ def patched(monkeypatch):
         state["search_top_k"] = top_k
         return _hits(min(top_k, 5))
 
+    async def fake_graph(driver, *, tenant_id, question, top_k):
+        state["graph_called"] = True
+        state["graph_top_k"] = top_k
+        return state["graph_return"]
+
     monkeypatch.setattr(orchestrator, "classify", fake_classify)
     monkeypatch.setattr(orchestrator, "hybrid_search", fake_search)
+    monkeypatch.setattr(orchestrator, "graph_search", fake_graph)
     return state
 
 
@@ -97,3 +122,88 @@ async def test_chunks_carry_filename_and_page_from_hits(patched):
     assert [c.filename for c in result.chunks] == ["f0.pdf", "f1.pdf"]
     assert [c.page for c in result.chunks] == [0, 1]
     assert [c.text for c in result.chunks] == ["chunk-0", "chunk-1"]
+
+
+# ---------- graph-search merge -----------------------------------------------
+
+async def test_graph_search_skipped_when_driver_is_none(patched):
+    patched["intent"] = "fact"
+    result = await orchestrator.retrieve(
+        qdrant=None, tenant_id=uuid.uuid4(), question="q", mode="auto", top_k=3,
+        neo4j=None,
+    )
+    assert result.mode_used == "fact"
+    assert patched["graph_called"] is False
+
+
+async def test_graph_search_skipped_for_casual_intent(patched):
+    patched["intent"] = "casual"
+    result = await orchestrator.retrieve(
+        qdrant=None, tenant_id=uuid.uuid4(), question="hi", mode="auto", top_k=3,
+        neo4j=object(),  # truthy stub
+    )
+    assert result.mode_used == "casual"
+    assert patched["graph_called"] is False
+
+
+async def test_graph_hits_prepended_then_vector(patched):
+    patched["intent"] = "fact"
+    patched["graph_return"] = _graph_hits([
+        ("policy.pdf", 9, "doc-graph", 99),
+    ])
+    result = await orchestrator.retrieve(
+        qdrant=None, tenant_id=uuid.uuid4(), question="q", mode="auto", top_k=3,
+        neo4j=object(),
+    )
+    assert patched["graph_called"] is True
+    assert [c.filename for c in result.chunks][:1] == ["policy.pdf"]
+    # Plus the 3 vector hits after, deduped against (doc-graph, 99).
+    assert [c.filename for c in result.chunks] == [
+        "policy.pdf", "f0.pdf", "f1.pdf", "f2.pdf"
+    ]
+
+
+async def test_graph_hits_dedup_against_vector_by_doc_and_chunk(patched):
+    """Same (document_id, chunk_index) → graph version wins, vector dropped."""
+    patched["intent"] = "fact"
+    # Vector returns chunk_index 0 for doc-0. Graph hit collides with that.
+    patched["graph_return"] = _graph_hits([
+        ("f0.pdf", 0, "doc-0", 0),  # collides with vector hit #0
+        ("policy.pdf", 5, "doc-9", 5),
+    ])
+    result = await orchestrator.retrieve(
+        qdrant=None, tenant_id=uuid.uuid4(), question="q", mode="auto", top_k=3,
+        neo4j=object(),
+    )
+    # First two = graph hits; vector "f0.pdf chunk 0" must be dropped, but
+    # f1/f2 still appear.
+    filenames = [c.filename for c in result.chunks]
+    assert filenames == ["f0.pdf", "policy.pdf", "f1.pdf", "f2.pdf"]
+    # Text comes from the graph hit (g-0), not the vector hit (chunk-0).
+    assert result.chunks[0].text == "g-0"
+
+
+async def test_graph_search_uses_same_effective_top_k_as_vector(patched):
+    patched["intent"] = "analysis"
+    patched["graph_return"] = []
+    await orchestrator.retrieve(
+        qdrant=None, tenant_id=uuid.uuid4(), question="compare", mode="auto",
+        top_k=5, neo4j=object(),
+    )
+    assert patched["search_top_k"] == 10
+    assert patched["graph_top_k"] == 10
+
+
+async def test_graph_search_failure_falls_back_to_vector_only(patched, monkeypatch):
+    patched["intent"] = "fact"
+
+    async def boom(driver, *, tenant_id, question, top_k):
+        raise RuntimeError("neo4j down")
+
+    monkeypatch.setattr(orchestrator, "graph_search", boom)
+    result = await orchestrator.retrieve(
+        qdrant=None, tenant_id=uuid.uuid4(), question="q", mode="auto", top_k=2,
+        neo4j=object(),
+    )
+    assert result.mode_used == "fact"
+    assert [c.filename for c in result.chunks] == ["f0.pdf", "f1.pdf"]

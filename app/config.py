@@ -77,6 +77,7 @@ class Settings(BaseSettings):
     graphrag_enabled: bool = True
     graphrag_workdir: str = "/data/graphrag"
     graphrag_extract_concurrency: int = 4
+    graph_retrieval_enabled: bool = True
 
     # Limits
     upload_max_file_size_mb: int = 50
