@@ -9,6 +9,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api import auth as auth_api
 from app.api import health as health_api
+from app.api import jobs as jobs_api
+from app.api import upload as upload_api
 from app.config import get_settings
 from app.utils.logging import (
     bind_request_context,
@@ -58,3 +60,5 @@ async def request_context_middleware(request: Request, call_next):
 
 app.include_router(health_api.router)
 app.include_router(auth_api.router)
+app.include_router(upload_api.router)
+app.include_router(jobs_api.router)

@@ -30,7 +30,9 @@ dependencies = [
     "graphrag>=0.5",
 
     "pypdf>=5.1",
+    "pdf2image>=1.17",
     "pillow>=11.0",
+    "tenacity>=9.0",
 
     "slowapi>=0.1.9",
     "python-jose[cryptography]>=3.3",

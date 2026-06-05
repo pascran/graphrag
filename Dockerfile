@@ -9,6 +9,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential curl ca-certificates libpq-dev \
         zlib1g-dev libssl-dev libffi-dev \
+        poppler-utils \
         libreoffice-common \
     && rm -rf /var/lib/apt/lists/*
 
