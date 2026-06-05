@@ -1,0 +1,10 @@
+"""SSE event encoder."""
+from __future__ import annotations
+
+import json
+from typing import Any
+
+
+def sse(event: str, data: dict[str, Any] | str) -> bytes:
+    payload = data if isinstance(data, str) else json.dumps(data, ensure_ascii=False)
+    return f"event: {event}\ndata: {payload}\n\n".encode("utf-8")
