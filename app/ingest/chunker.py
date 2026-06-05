@@ -38,10 +38,10 @@ def _recursive_split(text: str, size: int, overlap: int, seps: list[str]) -> lis
     if buf:
         out.append(buf)
 
-    # apply overlap by stitching tails
+    # apply overlap by stitching the tail of each chunk onto the next one
     if overlap > 0 and len(out) > 1:
         with_overlap: list[str] = [out[0]]
-        for prev, cur in zip(out, out[1:], strict=True):
+        for prev, cur in zip(out[:-1], out[1:], strict=True):
             tail = prev[-overlap:] if len(prev) > overlap else prev
             with_overlap.append(tail + sep + cur if sep else tail + cur)
         out = with_overlap
