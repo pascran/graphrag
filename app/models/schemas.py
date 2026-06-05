@@ -51,3 +51,15 @@ class QueryRequest(BaseModel):
     mode: str = "auto"
     top_k: int = Field(default=5, ge=1, le=20)
     filters: dict | None = None
+    stream: bool = Field(
+        default=True,
+        description="If false, returns a single JSON with the full answer + sources. "
+        "Use false in Swagger UI for easy manual testing.",
+    )
+
+
+class QueryResponse(BaseModel):
+    answer: str
+    sources: list[dict]
+    mode_used: str
+    latency_ms: int
