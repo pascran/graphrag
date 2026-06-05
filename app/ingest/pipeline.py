@@ -1,6 +1,7 @@
 """Ingestion pipeline orchestrator: OCR -> chunk -> embed -> vector + graph index."""
 from __future__ import annotations
 
+import asyncio
 import uuid
 from dataclasses import dataclass
 from pathlib import Path
@@ -11,7 +12,16 @@ from qdrant_client import AsyncQdrantClient
 from app.config import get_settings
 from app.ingest.chunker import chunk_pages
 from app.ingest.embedder import embed_texts
-from app.ingest.graph_indexer import GraphChunk, upsert_chunks_skeleton
+from app.ingest.graph_extract import (
+    ChunkExtraction,
+    extract_entities_and_relations,
+)
+from app.ingest.graph_indexer import (
+    ChunkWithGraph,
+    GraphChunk,
+    upsert_chunks_skeleton,
+    upsert_chunks_with_graph,
+)
 from app.ingest.ocr import ocr_file
 from app.ingest.vector_indexer import IndexableChunk, upsert_chunks
 from app.utils.logging import get_logger
@@ -24,6 +34,22 @@ class IngestResult:
     document_id: uuid.UUID
     chunk_count: int
     page_count: int
+
+
+async def _extract_all(
+    texts: list[str], concurrency: int
+) -> list[ChunkExtraction]:
+    """Bounded-parallel entity extraction across chunks. Per-chunk failures
+    are absorbed by graph_extract.extract_entities_and_relations (returns
+    empty extraction), so this never raises on flaky LLM responses.
+    """
+    sem = asyncio.Semaphore(max(1, concurrency))
+
+    async def one(text: str) -> ChunkExtraction:
+        async with sem:
+            return await extract_entities_and_relations(text)
+
+    return await asyncio.gather(*(one(t) for t in texts))
 
 
 async def ingest_document(
@@ -60,6 +86,23 @@ async def ingest_document(
         for i, c in enumerate(chunks)
     ]
 
+    extractions: list[ChunkExtraction] | None = None
+    if settings.graphrag_enabled:
+        try:
+            extractions = await _extract_all(
+                [c.text for c in chunks],
+                settings.graphrag_extract_concurrency,
+            )
+            ent_total = sum(len(e.entities) for e in extractions)
+            rel_total = sum(len(e.relations) for e in extractions)
+            log.info(
+                "graphrag_extract_done",
+                chunks=len(chunks), entities=ent_total, relations=rel_total,
+            )
+        except Exception as e:
+            log.warning("graphrag_extract_failed", error=str(e))
+            extractions = None
+
     # Fresh, locally-scoped clients — celery tasks each create a new asyncio
     # event loop, so module-level cached clients leak "Event loop is closed".
     qclient = AsyncQdrantClient(url=settings.qdrant_url)
@@ -80,7 +123,15 @@ async def ingest_document(
             )
             for ic in indexable
         ]
-        await upsert_chunks_skeleton(driver, graph_chunks)
+
+        if extractions is not None:
+            items = [
+                ChunkWithGraph(chunk=gc, extraction=ex)
+                for gc, ex in zip(graph_chunks, extractions, strict=True)
+            ]
+            await upsert_chunks_with_graph(driver, items)
+        else:
+            await upsert_chunks_skeleton(driver, graph_chunks)
     finally:
         await qclient.close()
         await driver.close()

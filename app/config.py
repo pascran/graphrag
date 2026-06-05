@@ -76,6 +76,7 @@ class Settings(BaseSettings):
     chunk_overlap: int = 200
     graphrag_enabled: bool = True
     graphrag_workdir: str = "/data/graphrag"
+    graphrag_extract_concurrency: int = 4
 
     # Limits
     upload_max_file_size_mb: int = 50
