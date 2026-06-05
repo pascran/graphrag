@@ -61,6 +61,13 @@ class QueryRequest(BaseModel):
         description="If false, returns a single JSON with the full answer + sources. "
         "Use false in Swagger UI for easy manual testing.",
     )
+    session_id: str | None = Field(
+        default=None,
+        max_length=128,
+        description="Optional opaque conversation id. If supplied, prior turns "
+        "(up to 30 min sliding TTL) are prepended to the prompt. Reuse the same "
+        "value across calls in one chat thread.",
+    )
 
 
 class QueryResponse(BaseModel):

@@ -29,7 +29,13 @@ class RetrievedChunk:
     text: str
 
 
-def render_rag_prompt(question: str, chunks: list[RetrievedChunk]) -> list[dict[str, str]]:
+def render_rag_prompt(
+    question: str,
+    chunks: list[RetrievedChunk],
+    *,
+    prior_turns: list[dict[str, str]] | None = None,
+    prior_summary: str | None = None,
+) -> list[dict[str, str]]:
     if not chunks:
         passages_block = "(no passages retrieved)"
     else:
@@ -44,7 +50,16 @@ def render_rag_prompt(question: str, chunks: list[RetrievedChunk]) -> list[dict[
         f"Question: {question}\n\n"
         f"Follow the system rules: cite passages only if you used them."
     )
-    return [
-        {"role": "system", "content": SYSTEM_RAG},
-        {"role": "user", "content": user_content},
-    ]
+
+    messages: list[dict[str, str]] = [{"role": "system", "content": SYSTEM_RAG}]
+    if prior_summary:
+        messages.append(
+            {
+                "role": "system",
+                "content": f"Conversation summary so far:\n{prior_summary}",
+            }
+        )
+    if prior_turns:
+        messages.extend(prior_turns)
+    messages.append({"role": "user", "content": user_content})
+    return messages

@@ -12,6 +12,7 @@ from app.db import qdrant as qdrant_db
 from app.deps import current_tenant
 from app.generate.llm import stream_chat
 from app.generate.prompt import render_rag_prompt
+from app.generate.session import append_turn, load as load_session
 from app.generate.streamer import sse
 from app.generate.llm import chat_once
 from app.models.schemas import QueryRequest, QueryResponse
@@ -42,17 +43,41 @@ async def _generate(req: QueryRequest, tenant_id) -> AsyncIterator[bytes]:
     sources = [{"filename": c.filename, "page": c.page} for c in retrieval.chunks]
     yield sse("citation", {"sources": sources})
 
-    # Always hand off to the LLM. The system prompt knows how to behave
-    # when there are no useful passages (general knowledge / casual reply).
-    messages = render_rag_prompt(req.question, retrieval.chunks)
+    prior_summary, prior_turns = "", []
+    if req.session_id:
+        try:
+            ctx = await load_session(tenant_id, req.session_id)
+            prior_summary, prior_turns = ctx.summary, ctx.turns
+        except Exception as e:
+            log.warning("session_load_failed", error=str(e))
 
+    messages = render_rag_prompt(
+        req.question,
+        retrieval.chunks,
+        prior_turns=prior_turns,
+        prior_summary=prior_summary,
+    )
+
+    answer_buf: list[str] = []
     try:
         async for delta in stream_chat(messages):
+            answer_buf.append(delta)
             yield sse("token", {"text": delta})
     except Exception as e:
         log.exception("generation_failed")
         yield sse("error", {"message": f"generation failed: {type(e).__name__}: {e}"})
         return
+
+    if req.session_id:
+        try:
+            await append_turn(
+                tenant_id,
+                req.session_id,
+                user_question=req.question,
+                assistant_answer="".join(answer_buf),
+            )
+        except Exception as e:
+            log.warning("session_append_failed", error=str(e))
 
     yield sse("done", {"mode_used": retrieval.mode_used,
                        "latency_ms": int((perf_counter() - t0) * 1000)})
@@ -82,8 +107,34 @@ async def query(
         payload_filters=req.filters,
     )
     sources = [{"filename": c.filename, "page": c.page} for c in retrieval.chunks]
-    messages = render_rag_prompt(req.question, retrieval.chunks)
+
+    prior_summary, prior_turns = "", []
+    if req.session_id:
+        try:
+            ctx = await load_session(auth.tenant_id, req.session_id)
+            prior_summary, prior_turns = ctx.summary, ctx.turns
+        except Exception as e:
+            log.warning("session_load_failed", error=str(e))
+
+    messages = render_rag_prompt(
+        req.question,
+        retrieval.chunks,
+        prior_turns=prior_turns,
+        prior_summary=prior_summary,
+    )
     answer = await chat_once(messages)
+
+    if req.session_id:
+        try:
+            await append_turn(
+                auth.tenant_id,
+                req.session_id,
+                user_question=req.question,
+                assistant_answer=answer,
+            )
+        except Exception as e:
+            log.warning("session_append_failed", error=str(e))
+
     return QueryResponse(
         answer=answer,
         sources=sources,
