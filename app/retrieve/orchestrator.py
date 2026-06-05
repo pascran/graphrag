@@ -12,9 +12,10 @@ from typing import Literal
 from qdrant_client import AsyncQdrantClient
 
 from app.generate.prompt import RetrievedChunk
+from app.retrieve.router import classify
 from app.retrieve.vector import VectorHit, hybrid_search
 
-Mode = Literal["auto", "vector", "graph", "hybrid", "fact", "analysis"]
+Mode = Literal["auto", "vector", "graph", "hybrid", "fact", "analysis", "casual"]
 
 
 @dataclass(frozen=True)
@@ -33,13 +34,23 @@ async def retrieve(
     top_k: int = 5,
     payload_filters: dict | None = None,
 ) -> RetrievalResult:
-    # Phase 4 v1: route everything to vector. Router (LLM-based) added later.
+    if mode == "auto":
+        intent = await classify(question)
+    elif mode in ("casual", "fact", "analysis"):
+        intent = mode
+    else:
+        intent = "fact"
+
+    if intent == "casual":
+        return RetrievalResult(mode_used="casual", chunks=[], raw=[])
+
+    effective_k = top_k * 2 if intent == "analysis" else top_k
     hits = await hybrid_search(
         qdrant,
         tenant_id=tenant_id,
         question=question,
-        top_k=top_k,
+        top_k=effective_k,
         payload_filters=payload_filters,
     )
     chunks = [RetrievedChunk(filename=h.filename, page=h.page, text=h.text) for h in hits]
-    return RetrievalResult(mode_used="vector", chunks=chunks, raw=hits)
+    return RetrievalResult(mode_used=intent, chunks=chunks, raw=hits)
