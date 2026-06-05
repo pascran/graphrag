@@ -2,8 +2,13 @@
 from __future__ import annotations
 
 import hashlib
+import uuid
+from types import SimpleNamespace
+from unittest.mock import AsyncMock, MagicMock
 
 from app.core.auth import (
+    AuthenticatedTenant,
+    authenticate,
     extract_bearer_token,
     generate_api_key,
     hash_api_key,
@@ -48,3 +53,38 @@ def test_bearer_extract_rejects_malformed():
     assert extract_bearer_token("Token abc") is None
     assert extract_bearer_token("Bearer") is None
     assert extract_bearer_token("abc123") is None
+
+
+# ---------- authenticate() — DB-backed lookup --------------------------------
+
+def _result_first(value):
+    res = MagicMock()
+    res.first.return_value = value
+    return res
+
+
+async def test_authenticate_returns_none_for_empty_token():
+    session = MagicMock()
+    session.execute = AsyncMock()
+    assert await authenticate(session, "") is None
+    session.execute.assert_not_awaited()
+
+
+async def test_authenticate_returns_none_when_no_row_matches():
+    session = MagicMock()
+    session.execute = AsyncMock(return_value=_result_first(None))
+    assert await authenticate(session, "graphrag_unknown") is None
+    session.execute.assert_awaited_once()
+
+
+async def test_authenticate_returns_tenant_on_match():
+    api_key_row = SimpleNamespace(id=uuid.uuid4(), tenant_id=uuid.uuid4())
+    tenant_row = SimpleNamespace(id=api_key_row.tenant_id, name="acme")
+    session = MagicMock()
+    session.execute = AsyncMock(return_value=_result_first((api_key_row, tenant_row)))
+
+    result = await authenticate(session, "graphrag_real")
+    assert isinstance(result, AuthenticatedTenant)
+    assert result.tenant_id == tenant_row.id
+    assert result.tenant_name == "acme"
+    assert result.api_key_id == api_key_row.id
