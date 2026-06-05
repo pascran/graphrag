@@ -42,12 +42,8 @@ async def _generate(req: QueryRequest, tenant_id) -> AsyncIterator[bytes]:
     sources = [{"filename": c.filename, "page": c.page} for c in retrieval.chunks]
     yield sse("citation", {"sources": sources})
 
-    if not retrieval.chunks:
-        yield sse("token", {"text": "검색된 관련 문서가 없습니다. (no relevant documents found)"})
-        yield sse("done", {"mode_used": retrieval.mode_used,
-                           "latency_ms": int((perf_counter() - t0) * 1000)})
-        return
-
+    # Always hand off to the LLM. The system prompt knows how to behave
+    # when there are no useful passages (general knowledge / casual reply).
     messages = render_rag_prompt(req.question, retrieval.chunks)
 
     try:
@@ -86,15 +82,6 @@ async def query(
         payload_filters=req.filters,
     )
     sources = [{"filename": c.filename, "page": c.page} for c in retrieval.chunks]
-
-    if not retrieval.chunks:
-        return QueryResponse(
-            answer="검색된 관련 문서가 없습니다. (no relevant documents found)",
-            sources=sources,
-            mode_used=retrieval.mode_used,
-            latency_ms=int((perf_counter() - t0) * 1000),
-        )
-
     messages = render_rag_prompt(req.question, retrieval.chunks)
     answer = await chat_once(messages)
     return QueryResponse(

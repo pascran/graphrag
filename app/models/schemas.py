@@ -52,8 +52,9 @@ class QueryRequest(BaseModel):
     top_k: int = Field(default=5, ge=1, le=20)
     filters: dict[str, str | int | bool | None] | None = Field(
         default=None,
+        examples=[None],
         description="Optional payload filters as a flat object. Values must be primitives. "
-        "Example: {\"doc_type\": \"manual\"}.",
+        "Leave null for no filter. Example when needed: {\"doc_type\": \"manual\"}.",
     )
     stream: bool = Field(
         default=True,
