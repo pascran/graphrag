@@ -16,6 +16,7 @@ dist/
 
 # Virtualenv
 .venv/
+.venv-test/
 venv/
 env/
 
