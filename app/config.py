@@ -90,6 +90,11 @@ class Settings(BaseSettings):
     upload_max_files_per_request: int = 100
     rate_limit_per_minute: int = 60
 
+    # Maintenance jobs
+    # When True, the orphan :Entity cleanup beat schedule is registered.
+    # Default is False so a stray celery-beat process is a no-op.
+    cleanup_orphans_enabled: bool = False
+
     @property
     def postgres_dsn(self) -> str:
         return (
