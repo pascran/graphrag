@@ -79,6 +79,12 @@ class Settings(BaseSettings):
     graphrag_extract_concurrency: int = 4
     graph_retrieval_enabled: bool = True
 
+    # Reranker (cross-encoder over vector hits)
+    reranker_enabled: bool = True
+    reranker_model: str = "BAAI/bge-reranker-v2-m3"
+    reranker_oversample: int = 4  # fetch top_k * oversample from Qdrant
+    reranker_use_fp16: bool = True
+
     # Limits
     upload_max_file_size_mb: int = 50
     upload_max_files_per_request: int = 100

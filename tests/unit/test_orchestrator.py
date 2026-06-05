@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import uuid
+from types import SimpleNamespace
 
 import pytest
 
@@ -44,6 +45,11 @@ def patched(monkeypatch):
         "graph_called": False,
         "graph_top_k": None,
         "graph_return": [],
+        "rerank_called": False,
+        "rerank_input_n": None,
+        "rerank_top_k": None,
+        "reranker_enabled": False,
+        "reranker_oversample": 4,
     }
 
     async def fake_classify(question: str) -> str:
@@ -52,16 +58,31 @@ def patched(monkeypatch):
 
     async def fake_search(qdrant, *, tenant_id, question, top_k, payload_filters):
         state["search_top_k"] = top_k
-        return _hits(min(top_k, 5))
+        return _hits(min(top_k, 20))
 
     async def fake_graph(driver, *, tenant_id, question, top_k):
         state["graph_called"] = True
         state["graph_top_k"] = top_k
         return state["graph_return"]
 
+    def fake_rerank(*, question, hits, top_k):
+        state["rerank_called"] = True
+        state["rerank_input_n"] = len(hits)
+        state["rerank_top_k"] = top_k
+        # Reverse the list so we can detect that reranker actually ran.
+        return list(reversed(hits))[:top_k]
+
+    def fake_get_settings():
+        return SimpleNamespace(
+            reranker_enabled=state["reranker_enabled"],
+            reranker_oversample=state["reranker_oversample"],
+        )
+
     monkeypatch.setattr(orchestrator, "classify", fake_classify)
     monkeypatch.setattr(orchestrator, "hybrid_search", fake_search)
     monkeypatch.setattr(orchestrator, "graph_search", fake_graph)
+    monkeypatch.setattr(orchestrator, "rerank", fake_rerank)
+    monkeypatch.setattr(orchestrator, "get_settings", fake_get_settings)
     return state
 
 
@@ -207,3 +228,58 @@ async def test_graph_search_failure_falls_back_to_vector_only(patched, monkeypat
     )
     assert result.mode_used == "fact"
     assert [c.filename for c in result.chunks] == ["f0.pdf", "f1.pdf"]
+
+
+# ---------- reranker integration ---------------------------------------------
+
+async def test_rerank_skipped_when_disabled(patched):
+    patched["intent"] = "fact"
+    patched["reranker_enabled"] = False
+    await orchestrator.retrieve(
+        qdrant=None, tenant_id=uuid.uuid4(), question="q", mode="auto", top_k=3,
+    )
+    # Without reranker, vector search asks for exactly top_k.
+    assert patched["search_top_k"] == 3
+    assert patched["rerank_called"] is False
+
+
+async def test_rerank_oversamples_vector_then_trims_to_top_k(patched):
+    patched["intent"] = "fact"
+    patched["reranker_enabled"] = True
+    patched["reranker_oversample"] = 4
+    result = await orchestrator.retrieve(
+        qdrant=None, tenant_id=uuid.uuid4(), question="q", mode="auto", top_k=3,
+    )
+    # Vector pulls top_k * oversample = 12
+    assert patched["search_top_k"] == 12
+    # Reranker gets the 12 hits and is asked to return top_k=3
+    assert patched["rerank_called"] is True
+    assert patched["rerank_input_n"] == 12
+    assert patched["rerank_top_k"] == 3
+    # fake_rerank reverses input order, so final ranking is reversed too.
+    # _hits(min(12, 20)) -> 12 hits f0..f11; reversed top 3 = f11,f10,f9
+    filenames = [c.filename for c in result.chunks]
+    assert filenames == ["f11.pdf", "f10.pdf", "f9.pdf"]
+
+
+async def test_rerank_combines_with_analysis_double_top_k(patched):
+    patched["intent"] = "analysis"
+    patched["reranker_enabled"] = True
+    patched["reranker_oversample"] = 4
+    await orchestrator.retrieve(
+        qdrant=None, tenant_id=uuid.uuid4(), question="compare", mode="auto", top_k=5,
+    )
+    # effective_k = top_k * 2 = 10 (analysis), oversample = 4, so search = 40
+    # But _hits caps at 20.
+    assert patched["search_top_k"] == 40
+    assert patched["rerank_top_k"] == 10  # post-rerank top_n = effective_k
+
+
+async def test_rerank_skipped_for_casual_intent(patched):
+    patched["intent"] = "casual"
+    patched["reranker_enabled"] = True
+    await orchestrator.retrieve(
+        qdrant=None, tenant_id=uuid.uuid4(), question="hi", mode="auto", top_k=3,
+    )
+    assert patched["rerank_called"] is False
+    assert patched["search_top_k"] is None  # casual short-circuits vector too
