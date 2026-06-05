@@ -39,6 +39,7 @@ def stub_session():
     session.execute = AsyncMock()
     session.commit = AsyncMock()
     session.flush = AsyncMock()
+    session.rollback = AsyncMock()
     return session
 
 
@@ -140,6 +141,61 @@ def test_jobs_get_returns_404_when_missing(client, stub_session):
     r = client.get(f"/v1/jobs/{uuid.uuid4()}")
     assert r.status_code == 404
     assert "job not found" in r.json()["detail"]
+
+
+# ---------- /v1/jobs/{id}/stream (SSE) ---------------------------------------
+
+def _job(id_, status_, progress=0.0, error=None, tenant_id=None):
+    return SimpleNamespace(
+        id=id_, tenant_id=tenant_id, status=status_, progress=progress,
+        error=error,
+        created_at=datetime.now(tz=timezone.utc),
+        updated_at=datetime.now(tz=timezone.utc),
+    )
+
+
+def test_jobs_stream_404_when_missing(client, stub_session, monkeypatch):
+    from app.api import jobs as jobs_api
+    monkeypatch.setattr(jobs_api, "JOB_STREAM_POLL_SECONDS", 0.0)
+    stub_session.execute.return_value = _result_with_one(None)
+    r = client.get(f"/v1/jobs/{uuid.uuid4()}/stream")
+    assert r.status_code == 404
+
+
+def test_jobs_stream_emits_progress_then_done_on_completion(
+    client, stub_session, fake_tenant, monkeypatch
+):
+    from app.api import jobs as jobs_api
+    monkeypatch.setattr(jobs_api, "JOB_STREAM_POLL_SECONDS", 0.0)
+    job_id = uuid.uuid4()
+    stub_session.execute.side_effect = [
+        _result_with_one(_job(job_id, "running", 0.3, tenant_id=fake_tenant.tenant_id)),
+        _result_with_one(_job(job_id, "running", 0.6, tenant_id=fake_tenant.tenant_id)),
+        _result_with_one(_job(job_id, "completed", 1.0, tenant_id=fake_tenant.tenant_id)),
+    ]
+    with client.stream("GET", f"/v1/jobs/{job_id}/stream") as r:
+        assert r.status_code == 200
+        assert "text/event-stream" in r.headers["content-type"]
+        body = "".join(chunk for chunk in r.iter_text())
+    assert "event: progress" in body
+    assert "event: done" in body
+    assert '"status":"completed"' in body or '"status": "completed"' in body
+
+
+def test_jobs_stream_emits_done_immediately_for_terminal_job(
+    client, stub_session, fake_tenant, monkeypatch
+):
+    from app.api import jobs as jobs_api
+    monkeypatch.setattr(jobs_api, "JOB_STREAM_POLL_SECONDS", 0.0)
+    job_id = uuid.uuid4()
+    stub_session.execute.return_value = _result_with_one(
+        _job(job_id, "failed", 0.5, error="boom", tenant_id=fake_tenant.tenant_id)
+    )
+    with client.stream("GET", f"/v1/jobs/{job_id}/stream") as r:
+        assert r.status_code == 200
+        body = "".join(chunk for chunk in r.iter_text())
+    assert "event: done" in body
+    assert '"status":"failed"' in body or '"status": "failed"' in body
 
 
 # ---------- /v1/documents (GET) ----------------------------------------------
