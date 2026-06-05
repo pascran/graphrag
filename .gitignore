@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Env
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Virtualenv
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# MyPy / Ruff
+.mypy_cache/
+.ruff_cache/
+
+# Logs
+logs/
+*.log
+
+# Local data / models (root-anchored — don't catch app/models/)
+/models/
+/data/
+/uploads/
+/qdrant_storage/
+neo4j_data/
+postgres_data/
+redis_data/
+graphrag_workdir/
+
+# Secrets
+*.pem
+*.key
+*.crt
+secrets/
