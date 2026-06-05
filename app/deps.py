@@ -3,11 +3,18 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator
 
-from fastapi import Depends, Header, HTTPException, status
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from app.core.auth import AuthenticatedTenant, authenticate, extract_bearer_token
+from app.core.auth import AuthenticatedTenant, authenticate
 from app.db.postgres import get_engine
+
+bearer_scheme = HTTPBearer(
+    auto_error=False,
+    scheme_name="bearerAuth",
+    description="Paste the API key only — Swagger adds the 'Bearer ' prefix automatically.",
+)
 
 _session_factory: async_sessionmaker[AsyncSession] | None = None
 
@@ -25,10 +32,10 @@ async def get_db() -> AsyncIterator[AsyncSession]:
 
 
 async def current_tenant(
-    authorization: str | None = Header(default=None),
+    creds: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
     session: AsyncSession = Depends(get_db),
 ) -> AuthenticatedTenant:
-    token = extract_bearer_token(authorization)
+    token = creds.credentials.strip() if creds and creds.credentials else ""
     if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
