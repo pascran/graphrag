@@ -436,6 +436,51 @@ list_documents, query_streaming). 기본 `rate_limit_per_minute=60`에서는 대
 
 ---
 
+## 평가 결과 (Phase 7 RAGAS-style harness)
+
+`eval/run_eval.py`로 실행한 합성 평가. **가상 공공기관(KPRI) 출장정책 도메인의 한국어
+PNG 4개**(`tests/fixtures/eval_pdfs/`)에 **12 골든 질문**(단일 사실 5 + 멀티홉 5 + 함정 2)을
+두 모드로 실행했다: **GraphRAG (graph + vector)** vs **vector-only**. 동일 retrieve 파이프라인 +
+동일 RAG 프롬프트 + 동일 로컬 vLLM(Gemma 4 26B AWQ-4bit)이 답변·judge 양쪽에 사용된다.
+
+| Mode | faithfulness | answer_relevancy | context_precision | context_recall | latency (s) |
+|---|---|---|---|---|---|
+| graph+vector | 0.853 | 0.858 | **0.350** | 0.778 | 13.90 |
+| vector-only  | **0.967** | **0.868** | **0.815** | 0.778 | 12.67 |
+
+카테고리별 분해와 전 질문 점수는 [`eval/results.md`](eval/results.md), 원본 응답·소스 청크는
+[`eval/raw_results.json`](eval/raw_results.json).
+
+**관찰 (graph가 오히려 손해)**: 이 합성셋에서는 `vector-only`가 모든 지표에서 `graph+vector`
+와 같거나 더 높게 나왔다. 특히 `context_precision`이 0.815 → 0.350 으로 절반 이하로 떨어진 것이
+가장 두드러진다. 원인은 아래 [운영 노트 6 — Graph 검색 시드 정확도](#운영-노트)에서
+hypothesize된 것과 정확히 일치한다: `graph_search` 가 `toLower(seed.name)` 기반 substring
+매칭으로 시드를 잡고 `_merge` 가 graph 히트를 응답 앞으로 prepend 하므로, "원장", "출장",
+"부원장" 같은 짧은 한국어 엔티티가 question token 과 우연히 매칭되어 false-positive 청크가
+상위로 올라온다. 즉 **이 평가는 본 레포의 기존 코드 주석에 적혀 있던 리스크 가설을 실증한
+결과**다. 차기 작업으로 (1) 시드 매칭을 토큰 경계 + 정규화로 강화하거나, (2) `_merge` 의
+prepend 정책을 rerank 점수 기반 fusion 으로 바꾸면 graph 모드가 다시 의미 있게 될 가능성이
+있다.
+
+**한계 (정직성)**:
+- N=12 합성셋 · 작성자 1인 단독 라벨링이라 **방향성 sanity check** 이지 정밀 벤치가 아니다.
+- generator 와 judge 가 같은 vLLM 을 공유하므로 절대 점수는 낙관적으로 편향된다 (양쪽 모두
+  같은 hallucination 모드를 공유).
+- 함정(trap-no-evidence) 질문 2개는 정의상 reference 가 없어 `context_recall` 과
+  `context_precision` 이 0 / N/A 로 나타난다 (집계 표에는 0 으로 포함).
+- latency 는 워밍업 없이 1회 측정. 모델 로딩 비용은 첫 질문 외에서 제외됨.
+
+**재현**:
+```bash
+.venv/bin/python scripts/build_eval_pngs.py        # 합성 PNG 4개
+curl -F "files=@..." http://localhost:8000/v1/upload  # 4 PNG 업로드 → 인덱스
+docker cp eval/ llm-engine-app-1:/app/
+docker exec llm-engine-app-1 python -m eval.run_eval
+docker cp llm-engine-app-1:/app/eval/{raw_results.json,results.md} eval/
+```
+
+---
+
 ## 운영 노트
 
 알려진 갭/리스크 (자세한 분석과 대응은 [`docs/OPERATIONS.md`](docs/OPERATIONS.md),

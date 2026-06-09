@@ -1,0 +1,934 @@
+{
+  "graph+vector": [
+    {
+      "id": "single-01",
+      "category": "single-fact",
+      "question": "KPRI 국내 출장의 일일 식비 한도는 얼마인가?",
+      "ground_truth": "국내 출장의 일일 식비 한도는 50,000원이다.",
+      "answer": "KPRI 국내 출장의 일일 식비 한도는 50,000원입니다.\n\n[Source: 01_출장정책.png]",
+      "sources": [
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 5,
+      "mode_used": "fact",
+      "latency_s": 27.663,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9694175449738385,
+        "context_precision": 0.5833333333333333,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "single-02",
+      "category": "single-fact",
+      "question": "KPRI 해외 출장은 출장 며칠 전까지 신청해야 하는가?",
+      "ground_truth": "해외 출장은 출장 14일 전까지 신청해야 한다.",
+      "answer": "KPRI의 해외 출장은 출장 14일 전까지 부서장의 승인을 받은 후, 행정지원실의 사전 검토를 거쳐 신청해야 합니다.\n\n[Source: 01_출장정책.png]",
+      "sources": [
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 5,
+      "mode_used": "fact",
+      "latency_s": 12.576,
+      "scores": {
+        "faithfulness": 0.6666666666666666,
+        "answer_relevancy": 0.8738746085556798,
+        "context_precision": 0.3333333333333333,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "single-03",
+      "category": "single-fact",
+      "question": "한국정책연구원(KPRI)의 원장의 성명은 무엇인가?",
+      "ground_truth": "원장의 성명은 김도윤이다.",
+      "answer": "한국정책연구원(KPRI) 원장의 성명은 김도윤입니다.\n\n[Source: 02_조직체계도.png]",
+      "sources": [
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 5,
+      "mode_used": "fact",
+      "latency_s": 11.686,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7378678718685213,
+        "context_precision": 0.3333333333333333,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "single-04",
+      "category": "single-fact",
+      "question": "국내 출장 보고서는 출장 종료 후 며칠 이내에 제출해야 하는가?",
+      "ground_truth": "국내 출장 보고서는 출장 종료 후 5일 이내에 제출해야 한다.",
+      "answer": "국내 출장 보고서는 출장 종료 후 5일 이내에 제출해야 합니다.\n\n[Source: 04_출장보고서지침.png, 01_출장정책.png]",
+      "sources": [
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 6,
+      "mode_used": "fact",
+      "latency_s": 12.456,
+      "scores": {
+        "faithfulness": 0.6666666666666666,
+        "answer_relevancy": 0.9340966951897123,
+        "context_precision": 0.3666666666666667,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "single-05",
+      "category": "single-fact",
+      "question": "한국정책연구원은 몇 개의 부서로 구성되어 있는가?",
+      "ground_truth": "5개 부서 (정책연구부, 데이터분석부, 국제협력부, 행정지원실, 감사실) 로 구성되어 있다.",
+      "answer": "한국정책연구원은 총 5개의 부서로 구성되어 있습니다.\n\n[Source: 02_조직체계도.png]",
+      "sources": [
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 5,
+      "mode_used": "fact",
+      "latency_s": 11.784,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9759010884524416,
+        "context_precision": 0.41666666666666663,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "multihop-01",
+      "category": "multi-hop",
+      "question": "정책연구부 소속 연구원이 80만원짜리 국내 출장을 신청할 때 결재 라인은 어떻게 되는가?",
+      "ground_truth": "80만원은 50만원 이상 200만원 미만 구간이므로 정책연구부 부서장 최민호의 승인 후 부원장 이지환의 결재를 받아야 한다.",
+      "answer": "정책연구부 소속 연구원이 80만원 규모의 국내 출장을 신청할 경우, 결재 라인은 다음과 같습니다.\n\n1. **승인 권한**: 단일 출장 금액이 50만원 이상 200만원 미만에 해당하므로 **부원장 결재** 대상입니다. [Source: 03_승인권한규정.png p.1]\n2. **신청 절차**: 국내 출장이므로 **소속 부서장의 승인**을 받아야 합니다. [Source: 01_출장정책.png p.1]\n\n따라서 해당 연구원은 먼저 소속 부서장의 승인을 받은 후, 부원장의 결재를 받는 절차를 거쳐야 합니다. [Source: 01_출장정책.png p.1, 03_승인권한규정.png p.1]",
+      "sources": [
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 5,
+      "mode_used": "fact",
+      "latency_s": 15.883,
+      "scores": {
+        "faithfulness": 0.4,
+        "answer_relevancy": 0.7761739254335053,
+        "context_precision": 0.6388888888888888,
+        "context_recall": 0.3333333333333333
+      }
+    },
+    {
+      "id": "multihop-02",
+      "category": "multi-hop",
+      "question": "감사실 실장 강서윤의 출장은 누구의 승인을 받는가?",
+      "ground_truth": "감사실 직원의 출장은 부원장을 경유하지 않고 원장 김도윤이 직접 승인한다.",
+      "answer": "감사실 실장 강서윤의 출장은 원장의 단일 결재로 처리됩니다.\n\n[Source: 03_승인권한규정.png p.1]",
+      "sources": [
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 6,
+      "mode_used": "fact",
+      "latency_s": 12.19,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8914748501691053,
+        "context_precision": 0.3333333333333333,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "multihop-03",
+      "category": "multi-hop",
+      "question": "부원장 이지환이 휴가 중일 때 150만원짜리 출장비 결재는 누가 대행하는가?",
+      "ground_truth": "150만원은 부원장 권한 구간이며 부원장 부재 시 행정지원실 실장 윤하늘이 대행한다.",
+      "answer": "부원장 이지환이 휴가 등으로 부재할 경우, 부원장 권한의 출장비 결재는 행정지원실 실장 윤하늘이 대행합니다. 질문하신 출장비는 200만원 미만(150만원)이므로 윤하늘 실장이 대행 결재를 수행할 수 있습니다.\n\n[Source: 03_승인권한규정.png p.1]",
+      "sources": [
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 6,
+      "mode_used": "fact",
+      "latency_s": 13.404,
+      "scores": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.7282320960719838,
+        "context_precision": 0.3333333333333333,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "multihop-04",
+      "category": "multi-hop",
+      "question": "KPRI에서 출장 보고서를 접수하여 정산을 처리하는 부서와 그 책임자의 이름은?",
+      "ground_truth": "행정지원실 회계팀에서 출장비 정산을 처리하며, 팀장은 박서연이다.",
+      "answer": "KPRI에서 출장 보고서를 접수하여 정산을 처리하는 부서는 행정지원실 회계팀이며, 책임자(팀장)의 이름은 박서연입니다.\n\n[Source: 04_출장보고서지침.png, 01_출장정책.png]",
+      "sources": [
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 6,
+      "mode_used": "fact",
+      "latency_s": 12.719,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9001274007054937,
+        "context_precision": 0.4444444444444444,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "multihop-05",
+      "category": "multi-hop",
+      "question": "해외 출장이 1주일 이상일 때 추가로 어떤 보고가 필요한가?",
+      "ground_truth": "1주일 이상 장기 해외 출장은 원장에게 사후 보고를 해야 하며, 결과 보고서를 부원장에게 직접 보고하는 외에 원장 보고를 추가로 한다.",
+      "answer": "해외 출장이 1주일 이상인 장기 출장의 경우, 출장 목적별 성과 보고서를 작성하여 부원장에게 직접 보고해야 하며, 추가로 원장에게 보고해야 합니다.\n\n[Source: 04_출장보고서지침.png]",
+      "sources": [
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 5,
+      "mode_used": "fact",
+      "latency_s": 12.564,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7795638503122406,
+        "context_precision": 0.41666666666666663,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "trap-01",
+      "category": "trap-no-evidence",
+      "question": "KPRI 원장 김도윤의 연봉은 얼마인가?",
+      "ground_truth": "문서에 명시되어 있지 않다.",
+      "answer": "제공된 문서에는 한국정책연구원(KPRI) 원장 김도윤의 연봉에 관한 정보가 포함되어 있지 않습니다.",
+      "sources": [
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 5,
+      "mode_used": "fact",
+      "latency_s": 12.004,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7845150450969002,
+        "context_precision": 0.0,
+        "context_recall": 0.0
+      }
+    },
+    {
+      "id": "trap-02",
+      "category": "trap-no-evidence",
+      "question": "KPRI 사옥 주차장의 운영 시간은 몇 시부터 몇 시까지인가?",
+      "ground_truth": "문서에 명시되어 있지 않다.",
+      "answer": "제공된 문서에는 KPRI 사옥 주차장의 운영 시간에 관한 정보가 포함되어 있지 않습니다.",
+      "sources": [
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 5,
+      "mode_used": "fact",
+      "latency_s": 11.855,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9438524895683531,
+        "context_precision": 0.0,
+        "context_recall": 0.0
+      }
+    }
+  ],
+  "vector-only": [
+    {
+      "id": "single-01",
+      "category": "single-fact",
+      "question": "KPRI 국내 출장의 일일 식비 한도는 얼마인가?",
+      "ground_truth": "국내 출장의 일일 식비 한도는 50,000원이다.",
+      "answer": "KPRI 국내 출장의 일일 식비 한도는 50,000원입니다.\n\n[Source: 01_출장정책.png p.1]",
+      "sources": [
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 5,
+      "mode_used": "fact",
+      "latency_s": 12.625,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9694175449738385,
+        "context_precision": 1.0,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "single-02",
+      "category": "single-fact",
+      "question": "KPRI 해외 출장은 출장 며칠 전까지 신청해야 하는가?",
+      "ground_truth": "해외 출장은 출장 14일 전까지 신청해야 한다.",
+      "answer": "KPRI의 해외 출장은 출장 14일 전까지 부서장 승인을 받은 후 행정지원실의 사전 검토를 거쳐 신청해야 합니다.\n\n[Source: 01_출장정책.png]",
+      "sources": [
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 5,
+      "mode_used": "fact",
+      "latency_s": 12.463,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8718270014623223,
+        "context_precision": 1.0,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "single-03",
+      "category": "single-fact",
+      "question": "한국정책연구원(KPRI)의 원장의 성명은 무엇인가?",
+      "ground_truth": "원장의 성명은 김도윤이다.",
+      "answer": "한국정책연구원(KPRI)의 원장은 김도윤입니다.\n\n[Source: 02_조직체계도.png p.1]",
+      "sources": [
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 5,
+      "mode_used": "fact",
+      "latency_s": 12.201,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.693054645933271,
+        "context_precision": 1.0,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "single-04",
+      "category": "single-fact",
+      "question": "국내 출장 보고서는 출장 종료 후 며칠 이내에 제출해야 하는가?",
+      "ground_truth": "국내 출장 보고서는 출장 종료 후 5일 이내에 제출해야 한다.",
+      "answer": "국내 출장 보고서는 출장 종료 후 5일 이내에 제출해야 합니다.\n\n[Source: 04_출장보고서지침.png, 01_출장정책.png]",
+      "sources": [
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 5,
+      "mode_used": "fact",
+      "latency_s": 12.447,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9286549037669918,
+        "context_precision": 0.9166666666666666,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "single-05",
+      "category": "single-fact",
+      "question": "한국정책연구원은 몇 개의 부서로 구성되어 있는가?",
+      "ground_truth": "5개 부서 (정책연구부, 데이터분석부, 국제협력부, 행정지원실, 감사실) 로 구성되어 있다.",
+      "answer": "한국정책연구원은 5개의 부서로 구성되어 있습니다.\n\n[Source: 02_조직체계도.png p.1]",
+      "sources": [
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 5,
+      "mode_used": "fact",
+      "latency_s": 11.987,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9587614926299993,
+        "context_precision": 1.0,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "multihop-01",
+      "category": "multi-hop",
+      "question": "정책연구부 소속 연구원이 80만원짜리 국내 출장을 신청할 때 결재 라인은 어떻게 되는가?",
+      "ground_truth": "80만원은 50만원 이상 200만원 미만 구간이므로 정책연구부 부서장 최민호의 승인 후 부원장 이지환의 결재를 받아야 한다.",
+      "answer": "정책연구부 소속 연구원이 80만원 상당의 국내 출장을 신청할 경우, 결재 라인은 다음과 같습니다.\n\n1. **승인 권한**: 단일 출장 비용이 50만원 이상 200만원 미만에 해당하므로 **부원장 결재** 대상입니다.\n2. **신청 절차**: 국내 출장이므로 **소속 부서장의 승인**을 먼저 받아야 합니다.\n\n따라서 해당 연구원은 먼저 소속 부서장의 승인을 받은 후, 부원장의 결재를 거쳐 출장을 신청해야 합니다.\n\n[Source: 03_승인권한규정.png]",
+      "sources": [
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 5,
+      "mode_used": "fact",
+      "latency_s": 14.691,
+      "scores": {
+        "faithfulness": 0.6,
+        "answer_relevancy": 0.7667870440632204,
+        "context_precision": 1.0,
+        "context_recall": 0.3333333333333333
+      }
+    },
+    {
+      "id": "multihop-02",
+      "category": "multi-hop",
+      "question": "감사실 실장 강서윤의 출장은 누구의 승인을 받는가?",
+      "ground_truth": "감사실 직원의 출장은 부원장을 경유하지 않고 원장 김도윤이 직접 승인한다.",
+      "answer": "감사실 실장 강서윤의 출장은 원장의 단일 결재로 처리됩니다.\n\n[Source: 03_승인권한규정.png p.1]",
+      "sources": [
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 5,
+      "mode_used": "fact",
+      "latency_s": 12.295,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8914748501691053,
+        "context_precision": 1.0,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "multihop-03",
+      "category": "multi-hop",
+      "question": "부원장 이지환이 휴가 중일 때 150만원짜리 출장비 결재는 누가 대행하는가?",
+      "ground_truth": "150만원은 부원장 권한 구간이며 부원장 부재 시 행정지원실 실장 윤하늘이 대행한다.",
+      "answer": "부원장 이지환이 휴가로 인해 부재할 경우, 200만원 미만의 출장비 결재는 행정지원실 실장 윤하늘이 대행합니다.\n\n[Source: 03_승인권한규정.png p.1]",
+      "sources": [
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 5,
+      "mode_used": "fact",
+      "latency_s": 13.024,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.901825107852266,
+        "context_precision": 1.0,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "multihop-04",
+      "category": "multi-hop",
+      "question": "KPRI에서 출장 보고서를 접수하여 정산을 처리하는 부서와 그 책임자의 이름은?",
+      "ground_truth": "행정지원실 회계팀에서 출장비 정산을 처리하며, 팀장은 박서연이다.",
+      "answer": "KPRI에서 출장 보고서를 접수하여 정산을 처리하는 부서는 행정지원실 회계팀이며, 책임자(팀장)의 이름은 박서연입니다.\n\n[Source: 04_출장보고서지침.png, 01_출장정책.png]",
+      "sources": [
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 5,
+      "mode_used": "fact",
+      "latency_s": 12.821,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9001274007054937,
+        "context_precision": 0.8666666666666667,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "multihop-05",
+      "category": "multi-hop",
+      "question": "해외 출장이 1주일 이상일 때 추가로 어떤 보고가 필요한가?",
+      "ground_truth": "1주일 이상 장기 해외 출장은 원장에게 사후 보고를 해야 하며, 결과 보고서를 부원장에게 직접 보고하는 외에 원장 보고를 추가로 한다.",
+      "answer": "해외 출장이 1주일 이상인 장기 출장의 경우, 다음과 같은 추가 보고 절차가 필요합니다.\n\n*   **결과 보고:** 출장 목적별 성과 보고서를 작성하여 부원장에게 직접 보고해야 하며, 1주일 이상 장기 출장은 원장 보고를 추가로 진행해야 합니다.\n*   **승인 절차:** 출장 신청 시 1주일 이상의 장기 출장은 부원장의 최종 승인이 추가로 필요하며, 원장에게 사후 보고를 해야 합니다.\n\n[Source: 04_출장보고서지침.png, 03_승인권한규정.png, 01_출장정책.png]",
+      "sources": [
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 5,
+      "mode_used": "fact",
+      "latency_s": 14.895,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7770506916982948,
+        "context_precision": 1.0,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "trap-01",
+      "category": "trap-no-evidence",
+      "question": "KPRI 원장 김도윤의 연봉은 얼마인가?",
+      "ground_truth": "문서에 명시되어 있지 않다.",
+      "answer": "제공된 문서에는 한국정책연구원(KPRI) 원장 김도윤의 연봉에 관한 정보가 포함되어 있지 않습니다.",
+      "sources": [
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 5,
+      "mode_used": "fact",
+      "latency_s": 11.353,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8086336533824894,
+        "context_precision": 0.0,
+        "context_recall": 0.0
+      }
+    },
+    {
+      "id": "trap-02",
+      "category": "trap-no-evidence",
+      "question": "KPRI 사옥 주차장의 운영 시간은 몇 시부터 몇 시까지인가?",
+      "ground_truth": "문서에 명시되어 있지 않다.",
+      "answer": "제공된 문서에는 KPRI 사옥 주차장의 운영 시간에 관한 정보가 포함되어 있지 않습니다.",
+      "sources": [
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        }
+      ],
+      "n_chunks": 5,
+      "mode_used": "fact",
+      "latency_s": 11.271,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9438524895683531,
+        "context_precision": 0.0,
+        "context_recall": 0.0
+      }
+    }
+  ]
+}

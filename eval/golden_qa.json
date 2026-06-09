@@ -1,0 +1,126 @@
+{
+  "domain": "한국정책연구원 (KPRI) — synthetic public-institute travel policy",
+  "documents": [
+    "01_출장정책.png",
+    "02_조직체계도.png",
+    "03_승인권한규정.png",
+    "04_출장보고서지침.png"
+  ],
+  "notes": "All people, departments, amounts and rules are fictitious. Single-fact questions are answered from one document; multi-hop questions require entity/relation traversal across documents (organization -> approval -> policy). Trap questions have no supporting evidence in any document; a faithful system must decline to answer.",
+  "questions": [
+    {
+      "id": "single-01",
+      "category": "single-fact",
+      "question": "KPRI 국내 출장의 일일 식비 한도는 얼마인가?",
+      "ground_truth": "국내 출장의 일일 식비 한도는 50,000원이다.",
+      "reference_contexts": [
+        "01_출장정책.png § 3: 국내 출장 일일 식비: 50,000원"
+      ]
+    },
+    {
+      "id": "single-02",
+      "category": "single-fact",
+      "question": "KPRI 해외 출장은 출장 며칠 전까지 신청해야 하는가?",
+      "ground_truth": "해외 출장은 출장 14일 전까지 신청해야 한다.",
+      "reference_contexts": [
+        "01_출장정책.png § 2: 해외 출장은 14일 전까지 부서장 승인 후 행정지원실 사전 검토를 거친다."
+      ]
+    },
+    {
+      "id": "single-03",
+      "category": "single-fact",
+      "question": "한국정책연구원(KPRI)의 원장의 성명은 무엇인가?",
+      "ground_truth": "원장의 성명은 김도윤이다.",
+      "reference_contexts": [
+        "02_조직체계도.png § 1: 원장: 김도윤   부원장: 이지환"
+      ]
+    },
+    {
+      "id": "single-04",
+      "category": "single-fact",
+      "question": "국내 출장 보고서는 출장 종료 후 며칠 이내에 제출해야 하는가?",
+      "ground_truth": "국내 출장 보고서는 출장 종료 후 5일 이내에 제출해야 한다.",
+      "reference_contexts": [
+        "01_출장정책.png § 5",
+        "04_출장보고서지침.png § 3"
+      ]
+    },
+    {
+      "id": "single-05",
+      "category": "single-fact",
+      "question": "한국정책연구원은 몇 개의 부서로 구성되어 있는가?",
+      "ground_truth": "5개 부서 (정책연구부, 데이터분석부, 국제협력부, 행정지원실, 감사실) 로 구성되어 있다.",
+      "reference_contexts": [
+        "02_조직체계도.png § 2"
+      ]
+    },
+    {
+      "id": "multihop-01",
+      "category": "multi-hop",
+      "question": "정책연구부 소속 연구원이 80만원짜리 국내 출장을 신청할 때 결재 라인은 어떻게 되는가?",
+      "ground_truth": "80만원은 50만원 이상 200만원 미만 구간이므로 정책연구부 부서장 최민호의 승인 후 부원장 이지환의 결재를 받아야 한다.",
+      "reference_contexts": [
+        "02_조직체계도.png § 2 (정책연구부 부서장: 최민호)",
+        "03_승인권한규정.png § 2 (50만원 이상 200만원 미만: 부원장 결재)",
+        "02_조직체계도.png § 1 (부원장: 이지환)"
+      ]
+    },
+    {
+      "id": "multihop-02",
+      "category": "multi-hop",
+      "question": "감사실 실장 강서윤의 출장은 누구의 승인을 받는가?",
+      "ground_truth": "감사실 직원의 출장은 부원장을 경유하지 않고 원장 김도윤이 직접 승인한다.",
+      "reference_contexts": [
+        "03_승인권한규정.png § 4 (감사실 출장은 원장이 직접 승인)",
+        "02_조직체계도.png § 1 (원장: 김도윤)",
+        "02_조직체계도.png § 3 (감사실 실장 → 원장)"
+      ]
+    },
+    {
+      "id": "multihop-03",
+      "category": "multi-hop",
+      "question": "부원장 이지환이 휴가 중일 때 150만원짜리 출장비 결재는 누가 대행하는가?",
+      "ground_truth": "150만원은 부원장 권한 구간이며 부원장 부재 시 행정지원실 실장 윤하늘이 대행한다.",
+      "reference_contexts": [
+        "03_승인권한규정.png § 2 (50만원 이상 200만원 미만: 부원장 결재)",
+        "03_승인권한규정.png § 5 (부원장 부재 시 행정지원실 실장이 대행)",
+        "02_조직체계도.png § 2 (행정지원실 실장: 윤하늘)"
+      ]
+    },
+    {
+      "id": "multihop-04",
+      "category": "multi-hop",
+      "question": "KPRI에서 출장 보고서를 접수하여 정산을 처리하는 부서와 그 책임자의 이름은?",
+      "ground_truth": "행정지원실 회계팀에서 출장비 정산을 처리하며, 팀장은 박서연이다.",
+      "reference_contexts": [
+        "01_출장정책.png § 4 (회계팀 팀장 박서연)",
+        "04_출장보고서지침.png § 4 (보고서는 행정지원실 회계팀에 제출)",
+        "02_조직체계도.png § 4 (행정지원실 산하 회계팀, 팀장 박서연)"
+      ]
+    },
+    {
+      "id": "multihop-05",
+      "category": "multi-hop",
+      "question": "해외 출장이 1주일 이상일 때 추가로 어떤 보고가 필요한가?",
+      "ground_truth": "1주일 이상 장기 해외 출장은 원장에게 사후 보고를 해야 하며, 결과 보고서를 부원장에게 직접 보고하는 외에 원장 보고를 추가로 한다.",
+      "reference_contexts": [
+        "03_승인권한규정.png § 3 (1주일 이상 장기 해외 출장은 원장에게 사후 보고)",
+        "04_출장보고서지침.png § 5 (해외 출장 결과 보고는 부원장 직접 보고, 1주일 이상은 원장 보고 추가)"
+      ]
+    },
+    {
+      "id": "trap-01",
+      "category": "trap-no-evidence",
+      "question": "KPRI 원장 김도윤의 연봉은 얼마인가?",
+      "ground_truth": "문서에 명시되어 있지 않다.",
+      "reference_contexts": []
+    },
+    {
+      "id": "trap-02",
+      "category": "trap-no-evidence",
+      "question": "KPRI 사옥 주차장의 운영 시간은 몇 시부터 몇 시까지인가?",
+      "ground_truth": "문서에 명시되어 있지 않다.",
+      "reference_contexts": []
+    }
+  ]
+}

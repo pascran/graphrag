@@ -56,3 +56,7 @@ graphrag_workdir/
 *.key
 *.crt
 secrets/
+
+# eval fixtures: PDFs are generated for reference only and not OCR-readable by Chandra.
+# The canonical fixtures are the PNGs. Build with scripts/build_eval_pngs.py.
+tests/fixtures/eval_pdfs/*.pdf
