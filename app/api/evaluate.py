@@ -92,7 +92,13 @@ async def evaluate(
 ) -> EvaluateResponse:
     settings = get_settings()
     qclient = qdrant_db.get_client()
-    driver = neo4j_db.get_driver() if settings.graph_retrieval_enabled else None
+    # mode="vector" forces vector-only retrieval (for graph-vs-vector A/B eval).
+    force_vector_only = req.mode == "vector"
+    driver = (
+        neo4j_db.get_driver()
+        if settings.graph_retrieval_enabled and not force_vector_only
+        else None
+    )
 
     retrieval = await retrieve(
         qclient,
