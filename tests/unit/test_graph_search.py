@@ -3,8 +3,10 @@ from __future__ import annotations
 
 import uuid
 from contextlib import asynccontextmanager
+from types import SimpleNamespace
 from unittest.mock import MagicMock
 
+from app.retrieve import graph as graph_mod
 from app.retrieve.graph import GraphHit, graph_search
 
 
@@ -146,3 +148,91 @@ async def test_graph_search_handles_missing_fields_gracefully():
     assert h.page == 0
     assert h.text == ""
     assert h.score == 0.0
+
+
+# ---------- Fix A: token-boundary seed matching ----------------------------
+
+
+def _patch_seed_settings(monkeypatch, *, use_tokens, min_len=2):
+    monkeypatch.setattr(
+        graph_mod,
+        "get_settings",
+        lambda: SimpleNamespace(
+            graph_seed_use_token_boundary=use_tokens,
+            graph_seed_min_entity_len=min_len,
+        ),
+        raising=False,
+    )
+
+
+async def test_graph_search_passes_tokens_when_flag_on(monkeypatch):
+    _patch_seed_settings(monkeypatch, use_tokens=True)
+    captured: list = []
+    driver = _make_driver(rows=[], captured=captured)
+    await graph_search(
+        driver, tenant_id=uuid.uuid4(), question="원장의 출장 승인", top_k=5,
+    )
+    assert len(captured) == 1
+    cypher, params = captured[0]
+    assert "IN $tokens" in cypher
+    assert isinstance(params["tokens"], list)
+    assert "min_len" in params
+    assert "question" not in params
+
+
+async def test_graph_search_passes_question_when_flag_off(monkeypatch):
+    _patch_seed_settings(monkeypatch, use_tokens=False)
+    captured: list = []
+    driver = _make_driver(rows=[], captured=captured)
+    await graph_search(
+        driver, tenant_id=uuid.uuid4(), question="원장 출장", top_k=5,
+    )
+    _, params = captured[0]
+    assert "question" in params
+    assert "tokens" not in params
+
+
+async def test_graph_search_false_positive_원장_not_in_tokens(monkeypatch):
+    _patch_seed_settings(monkeypatch, use_tokens=True)
+    captured: list = []
+    driver = _make_driver(rows=[], captured=captured)
+    await graph_search(
+        driver, tenant_id=uuid.uuid4(),
+        question="부원장의 출장 승인 권한은?", top_k=5,
+    )
+    tokens = captured[0][1]["tokens"]
+    assert "원장" not in tokens
+    assert "부원장" in tokens
+
+
+async def test_graph_search_true_positive_출장_via_josa(monkeypatch):
+    _patch_seed_settings(monkeypatch, use_tokens=True)
+    captured: list = []
+    driver = _make_driver(rows=[], captured=captured)
+    await graph_search(
+        driver, tenant_id=uuid.uuid4(), question="출장의 일일 식비는?", top_k=5,
+    )
+    assert "출장" in captured[0][1]["tokens"]
+
+
+async def test_graph_search_empty_tokens_short_circuits_driver(monkeypatch):
+    _patch_seed_settings(monkeypatch, use_tokens=True)
+    captured: list = []
+    driver = _make_driver(captured=captured)
+    out = await graph_search(
+        driver, tenant_id=uuid.uuid4(), question="?! . ,", top_k=5,
+    )
+    assert out == []
+    assert captured == []
+
+
+async def test_graph_search_tokens_param_is_sorted_list(monkeypatch):
+    _patch_seed_settings(monkeypatch, use_tokens=True)
+    captured: list = []
+    driver = _make_driver(rows=[], captured=captured)
+    await graph_search(
+        driver, tenant_id=uuid.uuid4(), question="원장 출장 승인 권한", top_k=5,
+    )
+    tokens = captured[0][1]["tokens"]
+    assert isinstance(tokens, list)
+    assert tokens == sorted(tokens)

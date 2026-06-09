@@ -50,6 +50,7 @@ def patched(monkeypatch):
         "rerank_top_k": None,
         "reranker_enabled": False,
         "reranker_oversample": 4,
+        "graph_rerank_fusion": False,
     }
 
     async def fake_classify(question: str) -> str:
@@ -76,6 +77,7 @@ def patched(monkeypatch):
         return SimpleNamespace(
             reranker_enabled=state["reranker_enabled"],
             reranker_oversample=state["reranker_oversample"],
+            graph_rerank_fusion=state["graph_rerank_fusion"],
         )
 
     monkeypatch.setattr(orchestrator, "classify", fake_classify)
@@ -283,3 +285,227 @@ async def test_rerank_skipped_for_casual_intent(patched):
     )
     assert patched["rerank_called"] is False
     assert patched["search_top_k"] is None  # casual short-circuits vector too
+
+
+# ---------- Fix B: graph+vector rerank fusion --------------------------------
+
+
+async def test_fusion_vector_hit_can_outrank_graph_hit(patched, monkeypatch):
+    """With fusion on, a graph hit is NOT auto-prepended: the reranker can
+    place vector hits ahead of it. (The discriminating regression vs prepend.)"""
+    patched["intent"] = "fact"
+    patched["reranker_enabled"] = True
+    patched["reranker_oversample"] = 1
+    patched["graph_rerank_fusion"] = True
+    patched["graph_return"] = _graph_hits([("policy.pdf", 9, "doc-graph", 99)])
+
+    def rerank_vector_first(*, question, hits, top_k):
+        patched["rerank_called"] = True
+        patched["rerank_input_n"] = len(hits)
+        ordered = sorted(hits, key=lambda h: 0 if h.filename.startswith("f") else 1)
+        return ordered[:top_k]
+
+    monkeypatch.setattr(orchestrator, "rerank", rerank_vector_first)
+    result = await orchestrator.retrieve(
+        qdrant=None, tenant_id=uuid.uuid4(), question="q", mode="auto", top_k=3,
+        neo4j=object(),
+    )
+    assert result.chunks[0].filename.startswith("f")  # vector outranked graph
+
+
+async def test_fusion_graph_hit_can_outrank_vector_hit(patched, monkeypatch):
+    patched["intent"] = "fact"
+    patched["reranker_enabled"] = True
+    patched["reranker_oversample"] = 1
+    patched["graph_rerank_fusion"] = True
+    patched["graph_return"] = _graph_hits([("policy.pdf", 9, "doc-graph", 99)])
+
+    def rerank_graph_first(*, question, hits, top_k):
+        patched["rerank_called"] = True
+        patched["rerank_input_n"] = len(hits)
+        ordered = sorted(hits, key=lambda h: 0 if h.document_id == "doc-graph" else 1)
+        return ordered[:top_k]
+
+    monkeypatch.setattr(orchestrator, "rerank", rerank_graph_first)
+    result = await orchestrator.retrieve(
+        qdrant=None, tenant_id=uuid.uuid4(), question="q", mode="auto", top_k=3,
+        neo4j=object(),
+    )
+    assert result.chunks[0].text == "g-99"
+    # Discriminator vs prepend: the graph hit reached the reranker as part of
+    # the unified pool (1 graph + 3 vector). Under prepend the reranker would
+    # only see the 3 vector hits.
+    assert patched["rerank_input_n"] == 4
+
+
+async def test_fusion_full_pool_passed_to_reranker(patched):
+    patched["intent"] = "fact"
+    patched["reranker_enabled"] = True
+    patched["reranker_oversample"] = 1  # vector returns exactly top_k
+    patched["graph_rerank_fusion"] = True
+    patched["graph_return"] = _graph_hits([
+        ("policy.pdf", 1, "doc-g0", 90),
+        ("policy.pdf", 2, "doc-g1", 91),
+    ])
+    await orchestrator.retrieve(
+        qdrant=None, tenant_id=uuid.uuid4(), question="q", mode="auto", top_k=3,
+        neo4j=object(),
+    )
+    # 2 graph + 3 vector, no collision → reranker sees the whole pool.
+    assert patched["rerank_input_n"] == 5
+
+
+async def test_fusion_dedup_before_rerank_graph_version_wins(patched):
+    patched["intent"] = "fact"
+    patched["reranker_enabled"] = True
+    patched["reranker_oversample"] = 1
+    patched["graph_rerank_fusion"] = True
+    # Graph hit collides with vector hit #0 (doc-0, chunk 0).
+    patched["graph_return"] = _graph_hits([("f0.pdf", 0, "doc-0", 0)])
+    await orchestrator.retrieve(
+        qdrant=None, tenant_id=uuid.uuid4(), question="q", mode="auto", top_k=3,
+        neo4j=object(),
+    )
+    # 1 graph + 3 vector, but the duplicate (doc-0,0) is removed before rerank.
+    assert patched["rerank_input_n"] == 3
+
+
+async def test_fusion_result_length_capped_at_effective_k(patched):
+    patched["intent"] = "fact"
+    patched["reranker_enabled"] = True
+    patched["reranker_oversample"] = 1
+    patched["graph_rerank_fusion"] = True
+    patched["graph_return"] = _graph_hits([
+        ("policy.pdf", i, f"doc-g{i}", 90 + i) for i in range(5)
+    ])
+    result = await orchestrator.retrieve(
+        qdrant=None, tenant_id=uuid.uuid4(), question="q", mode="auto", top_k=3,
+        neo4j=object(),
+    )
+    # pool = 5 graph + 3 vector = 8, but result capped at effective_k=3.
+    assert len(result.chunks) == 3
+
+
+async def test_fusion_raw_contains_graph_sourced_entries(patched, monkeypatch):
+    patched["intent"] = "fact"
+    patched["reranker_enabled"] = True
+    patched["reranker_oversample"] = 1
+    patched["graph_rerank_fusion"] = True
+    patched["graph_return"] = _graph_hits([("policy.pdf", 9, "doc-graph", 99)])
+
+    def rerank_identity(*, question, hits, top_k):
+        patched["rerank_called"] = True
+        patched["rerank_input_n"] = len(hits)
+        return list(hits)[:top_k]
+
+    monkeypatch.setattr(orchestrator, "rerank", rerank_identity)
+    result = await orchestrator.retrieve(
+        qdrant=None, tenant_id=uuid.uuid4(), question="q", mode="auto", top_k=3,
+        neo4j=object(),
+    )
+    # raw now reflects the full reranked pool, including graph-sourced chunks.
+    assert any(h.filename == "policy.pdf" for h in result.raw)
+
+
+async def test_fusion_disabled_flag_preserves_prepend_order(patched):
+    """Baseline regression guard: flag off → legacy graph-prepend behavior."""
+    patched["intent"] = "fact"
+    patched["reranker_enabled"] = True
+    patched["graph_rerank_fusion"] = False
+    patched["graph_return"] = _graph_hits([("policy.pdf", 9, "doc-graph", 99)])
+    result = await orchestrator.retrieve(
+        qdrant=None, tenant_id=uuid.uuid4(), question="q", mode="auto", top_k=3,
+        neo4j=object(),
+    )
+    assert result.chunks[0].filename == "policy.pdf"
+
+
+async def test_fusion_with_empty_graph_reranks_vector_only(patched):
+    """Most common production path: graph finds nothing → fusion still reranks
+    the vector pool and returns it (graceful, no crash, no graph hits)."""
+    patched["intent"] = "fact"
+    patched["reranker_enabled"] = True
+    patched["reranker_oversample"] = 1
+    patched["graph_rerank_fusion"] = True
+    patched["graph_return"] = []
+    result = await orchestrator.retrieve(
+        qdrant=None, tenant_id=uuid.uuid4(), question="q", mode="auto", top_k=3,
+        neo4j=object(),
+    )
+    assert patched["rerank_called"] is True
+    assert patched["rerank_input_n"] == 3  # 0 graph + 3 vector
+    assert len(result.chunks) == 3
+
+
+async def test_fusion_requires_reranker_enabled(patched):
+    """fusion=True but reranker disabled → no rerank, legacy prepend stands."""
+    patched["intent"] = "fact"
+    patched["reranker_enabled"] = False
+    patched["graph_rerank_fusion"] = True
+    patched["graph_return"] = _graph_hits([("policy.pdf", 9, "doc-graph", 99)])
+    result = await orchestrator.retrieve(
+        qdrant=None, tenant_id=uuid.uuid4(), question="q", mode="auto", top_k=3,
+        neo4j=object(),
+    )
+    assert patched["rerank_called"] is False
+    assert result.chunks[0].filename == "policy.pdf"
+
+
+def test_graph_hit_to_vector_hit_preserves_all_six_fields():
+    g = GraphHit(
+        filename="policy.pdf", page=7, text="t", score=2.0,
+        document_id="d9", chunk_index=4,
+    )
+    v = orchestrator._graph_hit_to_vector_hit(g)
+    assert isinstance(v, VectorHit)
+    assert (v.filename, v.page, v.text, v.score, v.document_id, v.chunk_index) == (
+        "policy.pdf", 7, "t", 2.0, "d9", 4,
+    )
+
+
+def test_build_candidate_pool_graph_first_on_collision():
+    g = GraphHit(
+        filename="g.pdf", page=1, text="graph-text", score=1.0,
+        document_id="doc-0", chunk_index=0,
+    )
+    v = VectorHit(
+        filename="v.pdf", page=1, text="vector-text", score=0.9,
+        document_id="doc-0", chunk_index=0,
+    )
+    pool = orchestrator._build_candidate_pool([g], [v])
+    assert len(pool) == 1
+    assert pool[0].text == "graph-text"
+
+
+def test_build_candidate_pool_intra_graph_dedup():
+    """Two graph hits for the same (document_id, chunk_index) — e.g. the same
+    chunk reached via two entity paths — collapse to one, first wins."""
+    g_list = [
+        GraphHit(
+            filename="g.pdf", page=1, text="first", score=2.0,
+            document_id="doc-0", chunk_index=0,
+        ),
+        GraphHit(
+            filename="g.pdf", page=1, text="second", score=1.0,
+            document_id="doc-0", chunk_index=0,
+        ),
+    ]
+    pool = orchestrator._build_candidate_pool(g_list, [])
+    assert len(pool) == 1
+    assert pool[0].text == "first"
+
+
+def test_build_candidate_pool_does_not_mutate_inputs():
+    g_list = [GraphHit(
+        filename="g.pdf", page=1, text="g", score=1.0,
+        document_id="dg", chunk_index=0,
+    )]
+    v_list = [VectorHit(
+        filename="v.pdf", page=1, text="v", score=0.9,
+        document_id="dv", chunk_index=0,
+    )]
+    pool = orchestrator._build_candidate_pool(g_list, v_list)
+    pool.append("x")  # mutating the result must not touch inputs
+    assert len(g_list) == 1
+    assert len(v_list) == 1
+    assert len(pool) == 3

@@ -78,12 +78,21 @@ class Settings(BaseSettings):
     graphrag_workdir: str = "/data/graphrag"
     graphrag_extract_concurrency: int = 4
     graph_retrieval_enabled: bool = True
+    # Fix A: when True, graph seed matching uses token-set IN matching instead
+    # of CONTAINS substring (kills short-Korean-entity false positives).
+    graph_seed_use_token_boundary: bool = False
+    # Minimum entity-name length for token-boundary seed matching.
+    graph_seed_min_entity_len: int = 2
 
     # Reranker (cross-encoder over vector hits)
     reranker_enabled: bool = True
     reranker_model: str = "BAAI/bge-reranker-v2-m3"
     reranker_oversample: int = 4  # fetch top_k * oversample from Qdrant
     reranker_use_fp16: bool = True
+    # Fix B: when True (and reranker_enabled), graph+vector candidates are
+    # unified into one pool and ordered purely by cross-encoder score instead
+    # of prepending graph hits. When False, the legacy prepend merge is used.
+    graph_rerank_fusion: bool = False
 
     # Limits
     upload_max_file_size_mb: int = 50

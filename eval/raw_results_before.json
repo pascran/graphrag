@@ -5,8 +5,12 @@
       "category": "single-fact",
       "question": "KPRI 국내 출장의 일일 식비 한도는 얼마인가?",
       "ground_truth": "국내 출장의 일일 식비 한도는 50,000원이다.",
-      "answer": "KPRI 국내 출장의 일일 식비 한도는 50,000원입니다.\n\n[Source: 01_출장정책.png p.1]",
+      "answer": "KPRI 국내 출장의 일일 식비 한도는 50,000원입니다.\n\n[Source: 01_출장정책.png]",
       "sources": [
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
         {
           "filename": "01_출장정책.png",
           "page": 1
@@ -20,21 +24,17 @@
           "page": 1
         },
         {
-          "filename": "04_출장보고서지침.png",
-          "page": 1
-        },
-        {
           "filename": "02_조직체계도.png",
           "page": 1
         }
       ],
       "n_chunks": 5,
       "mode_used": "fact",
-      "latency_s": 24.709,
+      "latency_s": 25.617,
       "scores": {
         "faithfulness": 1.0,
         "answer_relevancy": 0.9694175449738385,
-        "context_precision": 1.0,
+        "context_precision": 0.5833333333333333,
         "context_recall": 1.0
       }
     },
@@ -43,18 +43,18 @@
       "category": "single-fact",
       "question": "KPRI 해외 출장은 출장 며칠 전까지 신청해야 하는가?",
       "ground_truth": "해외 출장은 출장 14일 전까지 신청해야 한다.",
-      "answer": "KPRI 해외 출장은 출장 14일 전까지 부서장 승인을 받은 후, 행정지원실의 사전 검토를 거쳐 신청해야 합니다.\n\n[Source: 01_출장정책.png]",
+      "answer": "KPRI의 해외 출장은 출장 14일 전까지 부서장의 승인을 받은 후, 행정지원실의 사전 검토를 거쳐 신청해야 합니다.\n\n[Source: 01_출장정책.png]",
       "sources": [
-        {
-          "filename": "01_출장정책.png",
-          "page": 1
-        },
         {
           "filename": "03_승인권한규정.png",
           "page": 1
         },
         {
           "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
           "page": 1
         },
         {
@@ -68,11 +68,11 @@
       ],
       "n_chunks": 5,
       "mode_used": "fact",
-      "latency_s": 11.978,
+      "latency_s": 11.943,
       "scores": {
-        "faithfulness": 1.0,
-        "answer_relevancy": 0.8771740944657126,
-        "context_precision": 1.0,
+        "faithfulness": 0.6666666666666666,
+        "answer_relevancy": 0.8738746085556798,
+        "context_precision": 0.3333333333333333,
         "context_recall": 1.0
       }
     },
@@ -81,8 +81,16 @@
       "category": "single-fact",
       "question": "한국정책연구원(KPRI)의 원장의 성명은 무엇인가?",
       "ground_truth": "원장의 성명은 김도윤이다.",
-      "answer": "한국정책연구원(KPRI)의 원장은 김도윤입니다.\n\n[Source: 02_조직체계도.png]",
+      "answer": "한국정책연구원(KPRI) 원장의 성명은 김도윤입니다.\n\n[Source: 02_조직체계도.png]",
       "sources": [
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
         {
           "filename": "02_조직체계도.png",
           "page": 1
@@ -92,25 +100,17 @@
           "page": 1
         },
         {
-          "filename": "03_승인권한규정.png",
-          "page": 1
-        },
-        {
           "filename": "02_조직체계도.png",
-          "page": 1
-        },
-        {
-          "filename": "03_승인권한규정.png",
           "page": 1
         }
       ],
       "n_chunks": 5,
       "mode_used": "fact",
-      "latency_s": 11.83,
+      "latency_s": 11.267,
       "scores": {
         "faithfulness": 1.0,
-        "answer_relevancy": 0.71852632985716,
-        "context_precision": 1.0,
+        "answer_relevancy": 0.7378678718685213,
+        "context_precision": 0.3333333333333333,
         "context_recall": 1.0
       }
     },
@@ -126,6 +126,10 @@
           "page": 1
         },
         {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
           "filename": "04_출장보고서지침.png",
           "page": 1
         },
@@ -142,13 +146,13 @@
           "page": 1
         }
       ],
-      "n_chunks": 5,
+      "n_chunks": 6,
       "mode_used": "fact",
-      "latency_s": 11.933,
+      "latency_s": 11.676,
       "scores": {
         "faithfulness": 1.0,
-        "answer_relevancy": 0.9322224510905067,
-        "context_precision": 0.9166666666666666,
+        "answer_relevancy": 0.924832371887907,
+        "context_precision": 0.3666666666666667,
         "context_recall": 1.0
       }
     },
@@ -160,11 +164,7 @@
       "answer": "한국정책연구원은 총 5개의 부서로 구성되어 있습니다.\n\n[Source: 02_조직체계도.png]",
       "sources": [
         {
-          "filename": "02_조직체계도.png",
-          "page": 1
-        },
-        {
-          "filename": "02_조직체계도.png",
+          "filename": "03_승인권한규정.png",
           "page": 1
         },
         {
@@ -172,21 +172,25 @@
           "page": 1
         },
         {
-          "filename": "01_출장정책.png",
+          "filename": "02_조직체계도.png",
           "page": 1
         },
         {
-          "filename": "03_승인권한규정.png",
+          "filename": "02_조직체계도.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
           "page": 1
         }
       ],
       "n_chunks": 5,
       "mode_used": "fact",
-      "latency_s": 11.632,
+      "latency_s": 11.379,
       "scores": {
         "faithfulness": 1.0,
         "answer_relevancy": 0.9859175792235725,
-        "context_precision": 1.0,
+        "context_precision": 0.41666666666666663,
         "context_recall": 1.0
       }
     },
@@ -195,8 +199,12 @@
       "category": "multi-hop",
       "question": "정책연구부 소속 연구원이 80만원짜리 국내 출장을 신청할 때 결재 라인은 어떻게 되는가?",
       "ground_truth": "80만원은 50만원 이상 200만원 미만 구간이므로 정책연구부 부서장 최민호의 승인 후 부원장 이지환의 결재를 받아야 한다.",
-      "answer": "정책연구부 소속 연구원이 80만원 상당의 국내 출장을 신청할 경우, 결재 라인은 다음과 같습니다.\n\n1. **승인 권한**: 단일 출장 금액이 50만원 이상 200만원 미만에 해당하므로 **부원장 결재** 대상입니다.\n2. **신청 절차**: 국내 출장이므로 **소속 부서장의 승인**을 먼저 받아야 합니다.\n\n따라서 해당 연구원은 먼저 소속 부서장의 승인을 받은 후, 부원장의 결재를 거쳐 출장을 신청해야 합니다.\n\n[Source: 01_출장정책.png, 03_승인권한규정.png]",
+      "answer": "정책연구부 소속 연구원이 80만원 상당의 국내 출장을 신청할 경우, 결재 라인은 다음과 같습니다.\n\n1. **승인 권한**: 단일 출장 금액이 50만원 이상 200만원 미만에 해당하므로 **부원장 결재** 대상입니다. [Source: 03_승인권한규정.png p.1]\n2. **신청 절차**: 국내 출장이므로 **소속 부서장의 승인**을 받아야 합니다. [Source: 01_출장정책.png p.1]\n\n따라서 해당 연구원은 먼저 소속 부서장의 승인을 받은 후, 부원장의 결재를 받는 절차를 거쳐야 합니다.",
       "sources": [
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
         {
           "filename": "01_출장정책.png",
           "page": 1
@@ -212,19 +220,15 @@
         {
           "filename": "04_출장보고서지침.png",
           "page": 1
-        },
-        {
-          "filename": "04_출장보고서지침.png",
-          "page": 1
         }
       ],
       "n_chunks": 5,
       "mode_used": "fact",
-      "latency_s": 14.663,
+      "latency_s": 14.625,
       "scores": {
-        "faithfulness": 0.6666666666666666,
-        "answer_relevancy": 0.7713035368972257,
-        "context_precision": 1.0,
+        "faithfulness": 0.4,
+        "answer_relevancy": 0.7783002838035502,
+        "context_precision": 0.6388888888888888,
         "context_recall": 0.3333333333333333
       }
     },
@@ -240,6 +244,10 @@
           "page": 1
         },
         {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
           "filename": "03_승인권한규정.png",
           "page": 1
         },
@@ -256,13 +264,13 @@
           "page": 1
         }
       ],
-      "n_chunks": 5,
+      "n_chunks": 6,
       "mode_used": "fact",
-      "latency_s": 12.076,
+      "latency_s": 11.72,
       "scores": {
         "faithfulness": 1.0,
         "answer_relevancy": 0.8914748501691053,
-        "context_precision": 1.0,
+        "context_precision": 0.3333333333333333,
         "context_recall": 1.0
       }
     },
@@ -271,18 +279,22 @@
       "category": "multi-hop",
       "question": "부원장 이지환이 휴가 중일 때 150만원짜리 출장비 결재는 누가 대행하는가?",
       "ground_truth": "150만원은 부원장 권한 구간이며 부원장 부재 시 행정지원실 실장 윤하늘이 대행한다.",
-      "answer": "부원장 이지환이 휴가로 인해 부재할 경우, 부원장의 권한인 출장비 결재는 행정지원실 실장 윤하늘이 대행합니다.\n\n다만, 결재 금액이 200만원 미만(150만원)이므로 규정에 따라 행정지원실 실장의 대행이 가능합니다.\n\n[Source: 03_승인권한규정.png p.1]",
+      "answer": "부원장 이지환이 휴가 등으로 부재할 경우, 부원장 권한의 출장비 결재는 행정지원실 실장 윤하늘이 대행합니다. 질문하신 출장비는 200만원 미만(150만원)이므로 윤하늘 실장이 대행 결재를 수행할 수 있습니다.\n\n[Source: 03_승인권한규정.png p.1]",
       "sources": [
         {
           "filename": "03_승인권한규정.png",
           "page": 1
         },
         {
-          "filename": "01_출장정책.png",
+          "filename": "04_출장보고서지침.png",
           "page": 1
         },
         {
           "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
           "page": 1
         },
         {
@@ -294,13 +306,13 @@
           "page": 1
         }
       ],
-      "n_chunks": 5,
+      "n_chunks": 6,
       "mode_used": "fact",
-      "latency_s": 13.628,
+      "latency_s": 13.156,
       "scores": {
-        "faithfulness": 0.6666666666666666,
-        "answer_relevancy": 0.7543529457078156,
-        "context_precision": 1.0,
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.7993793186373345,
+        "context_precision": 0.3333333333333333,
         "context_recall": 1.0
       }
     },
@@ -316,15 +328,19 @@
           "page": 1
         },
         {
-          "filename": "01_출장정책.png",
-          "page": 1
-        },
-        {
-          "filename": "01_출장정책.png",
-          "page": 1
-        },
-        {
           "filename": "03_승인권한규정.png",
+          "page": 1
+        },
+        {
+          "filename": "04_출장보고서지침.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
           "page": 1
         },
         {
@@ -332,13 +348,13 @@
           "page": 1
         }
       ],
-      "n_chunks": 5,
+      "n_chunks": 6,
       "mode_used": "fact",
-      "latency_s": 12.328,
+      "latency_s": 12.259,
       "scores": {
         "faithfulness": 1.0,
         "answer_relevancy": 0.9001274007054937,
-        "context_precision": 0.8666666666666667,
+        "context_precision": 0.4444444444444444,
         "context_recall": 1.0
       }
     },
@@ -347,14 +363,18 @@
       "category": "multi-hop",
       "question": "해외 출장이 1주일 이상일 때 추가로 어떤 보고가 필요한가?",
       "ground_truth": "1주일 이상 장기 해외 출장은 원장에게 사후 보고를 해야 하며, 결과 보고서를 부원장에게 직접 보고하는 외에 원장 보고를 추가로 한다.",
-      "answer": "해외 출장이 1주일 이상인 장기 출장의 경우, 다음과 같은 추가 보고가 필요합니다.\n\n*   **결과 보고:** 출장 목적별 성과 보고서를 작성하여 부원장에게 직접 보고해야 하며, 1주일 이상 장기 출장은 원장 보고가 추가로 필요합니다.\n*   **승인 절차:** 출장 신청 시 1주일 이상의 장기 출장은 부원장의 최종 승인이 추가로 필요하며, 사후에 원장에게 보고해야 합니다.\n\n[Source: 04_출장보고서지침.png, 03_승인권한규정.png, 01_출장정책.png]",
+      "answer": "해외 출장이 1주일 이상인 장기 출장의 경우, 출장 목적별 성과 보고서를 작성하여 부원장에게 직접 보고해야 하며, 추가로 원장에게 보고해야 합니다.\n\n[Source: 04_출장보고서지침.png]",
       "sources": [
+        {
+          "filename": "03_승인권한규정.png",
+          "page": 1
+        },
         {
           "filename": "04_출장보고서지침.png",
           "page": 1
         },
         {
-          "filename": "03_승인권한규정.png",
+          "filename": "04_출장보고서지침.png",
           "page": 1
         },
         {
@@ -364,19 +384,15 @@
         {
           "filename": "01_출장정책.png",
           "page": 1
-        },
-        {
-          "filename": "04_출장보고서지침.png",
-          "page": 1
         }
       ],
       "n_chunks": 5,
       "mode_used": "fact",
-      "latency_s": 14.29,
+      "latency_s": 12.174,
       "scores": {
         "faithfulness": 1.0,
-        "answer_relevancy": 0.7857546857936765,
-        "context_precision": 1.0,
+        "answer_relevancy": 0.7543862773429765,
+        "context_precision": 0.41666666666666663,
         "context_recall": 1.0
       }
     },
@@ -385,35 +401,35 @@
       "category": "trap-no-evidence",
       "question": "KPRI 원장 김도윤의 연봉은 얼마인가?",
       "ground_truth": "문서에 명시되어 있지 않다.",
-      "answer": "제공된 문서에는 KPRI 원장 김도윤의 연봉에 관한 정보가 포함되어 있지 않습니다.\n\n[Source: 02_조직체계도.png]",
+      "answer": "제공된 문서에는 KPRI 원장 김도윤의 연봉에 관한 정보가 포함되어 있지 않습니다.",
       "sources": [
         {
-          "filename": "02_조직체계도.png",
-          "page": 1
-        },
-        {
-          "filename": "01_출장정책.png",
-          "page": 1
-        },
-        {
-          "filename": "02_조직체계도.png",
-          "page": 1
-        },
-        {
-          "filename": "01_출장정책.png",
+          "filename": "03_승인권한규정.png",
           "page": 1
         },
         {
           "filename": "04_출장보고서지침.png",
           "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
+        },
+        {
+          "filename": "01_출장정책.png",
+          "page": 1
+        },
+        {
+          "filename": "02_조직체계도.png",
+          "page": 1
         }
       ],
       "n_chunks": 5,
       "mode_used": "fact",
-      "latency_s": 12.167,
+      "latency_s": 11.209,
       "scores": {
-        "faithfulness": 0.5,
-        "answer_relevancy": 0.8052733985147312,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8192177878636447,
         "context_precision": 0.0,
         "context_recall": 0.0
       }
@@ -448,7 +464,7 @@
       ],
       "n_chunks": 5,
       "mode_used": "fact",
-      "latency_s": 11.194,
+      "latency_s": 11.176,
       "scores": {
         "faithfulness": 1.0,
         "answer_relevancy": 0.9438524895683531,
@@ -488,10 +504,10 @@
       ],
       "n_chunks": 5,
       "mode_used": "fact",
-      "latency_s": 11.568,
+      "latency_s": 11.601,
       "scores": {
         "faithfulness": 1.0,
-        "answer_relevancy": 0.9629593561185468,
+        "answer_relevancy": 0.9694175449738385,
         "context_precision": 1.0,
         "context_recall": 1.0
       }
@@ -501,7 +517,7 @@
       "category": "single-fact",
       "question": "KPRI 해외 출장은 출장 며칠 전까지 신청해야 하는가?",
       "ground_truth": "해외 출장은 출장 14일 전까지 신청해야 한다.",
-      "answer": "KPRI의 해외 출장은 출장 14일 전까지 부서장 승인을 받은 후 행정지원실의 사전 검토를 거쳐 신청해야 합니다.\n\n[Source: 01_출장정책.png]",
+      "answer": "KPRI의 해외 출장은 출장 14일 전까지 부서장 승인을 받은 후, 행정지원실의 사전 검토를 거쳐 신청해야 합니다.\n\n[Source: 01_출장정책.png]",
       "sources": [
         {
           "filename": "01_출장정책.png",
@@ -526,10 +542,10 @@
       ],
       "n_chunks": 5,
       "mode_used": "fact",
-      "latency_s": 12.151,
+      "latency_s": 12.007,
       "scores": {
         "faithfulness": 1.0,
-        "answer_relevancy": 0.8752039997220754,
+        "answer_relevancy": 0.8781100135874791,
         "context_precision": 1.0,
         "context_recall": 1.0
       }
@@ -564,7 +580,7 @@
       ],
       "n_chunks": 5,
       "mode_used": "fact",
-      "latency_s": 11.552,
+      "latency_s": 11.493,
       "scores": {
         "faithfulness": 1.0,
         "answer_relevancy": 0.693054645933271,
@@ -602,7 +618,7 @@
       ],
       "n_chunks": 5,
       "mode_used": "fact",
-      "latency_s": 11.881,
+      "latency_s": 11.779,
       "scores": {
         "faithfulness": 0.6666666666666666,
         "answer_relevancy": 0.924832371887907,
@@ -640,7 +656,7 @@
       ],
       "n_chunks": 5,
       "mode_used": "fact",
-      "latency_s": 11.485,
+      "latency_s": 11.429,
       "scores": {
         "faithfulness": 1.0,
         "answer_relevancy": 0.9859175792235725,
@@ -653,7 +669,7 @@
       "category": "multi-hop",
       "question": "정책연구부 소속 연구원이 80만원짜리 국내 출장을 신청할 때 결재 라인은 어떻게 되는가?",
       "ground_truth": "80만원은 50만원 이상 200만원 미만 구간이므로 정책연구부 부서장 최민호의 승인 후 부원장 이지환의 결재를 받아야 한다.",
-      "answer": "정책연구부 소속 연구원이 80만원 상당의 국내 출장을 신청할 경우, 결재 라인은 다음과 같습니다.\n\n1. **소속 부서장 승인**: 국내 출장은 소속 부서장의 승인을 받아야 합니다.\n2. **부원장 결재**: 단일 출장 비용이 50만원 이상 200만원 미만인 경우, 부원장의 결재를 받아야 합니다.\n\n따라서 해당 연구원은 먼저 소속 부서장의 승인을 받은 후, 부원장의 결재를 거쳐 출장을 신청해야 합니다.\n\n[Source: 01_출장정책.png, 03_승인권한규정.png]",
+      "answer": "정책연구부 소속 연구원이 80만원 상당의 국내 출장을 신청할 경우, 결재 라인은 다음과 같습니다.\n\n1. **승인 권한**: 출장비가 50만원 이상 200만원 미만에 해당하므로 **부원장**의 결재를 받아야 합니다.\n2. **신청 절차**: 국내 출장이므로 **소속 부서장의 승인**을 먼저 받아야 합니다.\n\n따라서 최종적으로는 **소속 부서장의 승인을 거쳐 부원장의 결재**를 받는 절차를 따르게 됩니다.\n\n[Source: 01_출장정책.png, 03_승인권한규정.png]",
       "sources": [
         {
           "filename": "01_출장정책.png",
@@ -678,10 +694,10 @@
       ],
       "n_chunks": 5,
       "mode_used": "fact",
-      "latency_s": 14.584,
+      "latency_s": 14.488,
       "scores": {
-        "faithfulness": 0.6666666666666666,
-        "answer_relevancy": 0.8080645471492492,
+        "faithfulness": 0.8,
+        "answer_relevancy": 0.7559699950784929,
         "context_precision": 1.0,
         "context_recall": 0.3333333333333333
       }
@@ -716,10 +732,10 @@
       ],
       "n_chunks": 5,
       "mode_used": "fact",
-      "latency_s": 11.649,
+      "latency_s": 11.578,
       "scores": {
         "faithfulness": 1.0,
-        "answer_relevancy": 0.8914748501691053,
+        "answer_relevancy": 0.8519583625592347,
         "context_precision": 1.0,
         "context_recall": 1.0
       }
@@ -754,10 +770,10 @@
       ],
       "n_chunks": 5,
       "mode_used": "fact",
-      "latency_s": 12.212,
+      "latency_s": 12.183,
       "scores": {
         "faithfulness": 1.0,
-        "answer_relevancy": 0.9055369900246658,
+        "answer_relevancy": 0.8247436475558461,
         "context_precision": 1.0,
         "context_recall": 1.0
       }
@@ -767,7 +783,7 @@
       "category": "multi-hop",
       "question": "KPRI에서 출장 보고서를 접수하여 정산을 처리하는 부서와 그 책임자의 이름은?",
       "ground_truth": "행정지원실 회계팀에서 출장비 정산을 처리하며, 팀장은 박서연이다.",
-      "answer": "KPRI에서 출장 보고서를 접수하여 정산을 처리하는 부서는 **행정지원실 회계팀**이며, 책임자(팀장)의 이름은 **박서연**입니다.\n\n[Source: 04_출장보고서지침.png, 01_출장정책.png]",
+      "answer": "KPRI에서 출장 보고서를 접수하여 정산을 처리하는 부서는 행정지원실 회계팀이며, 책임자(팀장)의 이름은 박서연입니다.\n\n[Source: 04_출장보고서지침.png, 01_출장정책.png]",
       "sources": [
         {
           "filename": "04_출장보고서지침.png",
@@ -792,7 +808,7 @@
       ],
       "n_chunks": 5,
       "mode_used": "fact",
-      "latency_s": 12.363,
+      "latency_s": 12.241,
       "scores": {
         "faithfulness": 1.0,
         "answer_relevancy": 0.9001274007054937,
@@ -805,7 +821,7 @@
       "category": "multi-hop",
       "question": "해외 출장이 1주일 이상일 때 추가로 어떤 보고가 필요한가?",
       "ground_truth": "1주일 이상 장기 해외 출장은 원장에게 사후 보고를 해야 하며, 결과 보고서를 부원장에게 직접 보고하는 외에 원장 보고를 추가로 한다.",
-      "answer": "해외 출장이 1주일 이상인 장기 출장의 경우, 다음과 같은 추가 보고 절차가 필요합니다.\n\n*   **결과 보고:** 출장 목적별 성과 보고서를 작성하여 부원장에게 직접 보고해야 하며, 1주일 이상 장기 출장은 원장 보고가 추가로 필요합니다.\n*   **승인 절차:** 출장 신청 시 1주일 이상의 장기 출장은 부원장의 최종 승인이 추가로 필요하며, 원장에게 사후 보고를 해야 합니다.\n\n[Source: 04_출장보고서지침.png, 03_승인권한규정.png, 01_출장정책.png]",
+      "answer": "해외 출장이 1주일 이상인 장기 출장의 경우, 다음과 같은 추가 보고가 필요합니다.\n\n1. **결과 보고**: 출장 목적별 성과 보고서를 작성하여 부원장에게 직접 보고해야 하며, 1주일 이상 장기 출장은 원장 보고가 추가로 필요합니다.\n2. **사후 보고**: 승인 권한 규정에 따라 1주일 이상 장기 해외 출장은 원장에게 사후 보고를 해야 합니다.\n\n[Source: 04_출장보고서지침.png, 03_승인권한규정.png]",
       "sources": [
         {
           "filename": "04_출장보고서지침.png",
@@ -830,10 +846,10 @@
       ],
       "n_chunks": 5,
       "mode_used": "fact",
-      "latency_s": 14.484,
+      "latency_s": 13.843,
       "scores": {
         "faithfulness": 1.0,
-        "answer_relevancy": 0.7552250911787947,
+        "answer_relevancy": 0.839934683374049,
         "context_precision": 1.0,
         "context_recall": 1.0
       }
@@ -868,7 +884,7 @@
       ],
       "n_chunks": 5,
       "mode_used": "fact",
-      "latency_s": 11.575,
+      "latency_s": 11.455,
       "scores": {
         "faithfulness": 1.0,
         "answer_relevancy": 0.8086336533824894,
@@ -906,7 +922,7 @@
       ],
       "n_chunks": 5,
       "mode_used": "fact",
-      "latency_s": 11.258,
+      "latency_s": 11.318,
       "scores": {
         "faithfulness": 1.0,
         "answer_relevancy": 0.9438524895683531,
